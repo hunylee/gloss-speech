@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code . *)",
+      "Bash(antigravity . *)",
+      "Bash(npx antigravity-ide *)",
+      "Bash(antigravity *)"
+    ]
+  }
+}
