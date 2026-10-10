@@ -1,7 +1,7 @@
 """조회 API, 수어 Viewer, 운영자 콘솔.
-실행: uvicorn app.main:app --host 0.0.0.0 --port 8000
-  운영자 콘솔: http://localhost:8000/console   (노트북/Mac mini)
-  태블릿 Viewer: http://<서버 IP>:8000/viewer  (콘솔의 QR로 접속)
+실행: uvicorn app.main:app --host 0.0.0.0 --port 8100
+  운영자 콘솔: http://localhost:8100/console   (노트북/Mac mini)
+  태블릿 Viewer: http://<서버 IP>:8100/viewer  (콘솔의 QR로 접속)
 """
 import os
 from pathlib import Path
@@ -59,7 +59,7 @@ def console():
 
 @app.get("/api/viewer-url")
 def viewer_url(request: Request):
-    port = request.url.port or 8000
+    port = request.url.port or 8100   # SyncSL 게이트웨이가 8000을 쓴다
     url = f"http://{lan_ip()}:{port}/viewer"
     return {"url": url, "viewers": len(hub.viewers)}
 

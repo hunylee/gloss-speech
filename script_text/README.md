@@ -26,7 +26,7 @@ docker compose up -d                 # 로컬 PostgreSQL (이미 설치돼 있�
 python -m scripts.ingest migrate
 python -m scripts.ingest sample      # 샘플 데이터
 python -m scripts.make_placeholder_clips  # gloss 글자가 나오는 임시 영상 (ffmpeg 필요)
-uvicorn app.main:app --host 0.0.0.0 --port 8000   # 콘솔: /console  태블릿: /viewer  API 문서: /docs
+uvicorn app.main:app --host 0.0.0.0 --port 8100   # 콘솔: /console  태블릿: /viewer  API 문서: /docs
 pytest -q                            # script_text_test DB를 만들고 지운다
 ```
 
@@ -64,8 +64,8 @@ gloss 순서대로 클립을 재생하고, `start_ms/end_ms`가 있으면 그 �
 
 
 ## 데모 실행 (현장)
-1. 노트북/Mac mini에서 서버 실행: `uvicorn app.main:app --host 0.0.0.0 --port 8000`
-2. 같은 와이파이에 연결된 태블릿으로 콘솔(`http://localhost:8000/console`)의 QR을 찍으면 `/viewer`가 열린다.
+1. 노트북/Mac mini에서 서버 실행: `uvicorn app.main:app --host 0.0.0.0 --port 8100`
+2. 같은 와이파이에 연결된 태블릿으로 콘솔(`http://localhost:8100/console`)의 QR을 찍으면 `/viewer`가 열린다.
 3. 콘솔에서 문장을 보내는 방법 세 가지
    - **마이크 시작**: 브라우저 음성인식(ko-KR). Chrome/Edge/Safari에서 동작하고 인터넷 연결이 필요하다 (음성이 브라우저 제조사 서버로 전송됨). 로컬 Whisper는 정식 버전에서 붙인다.
    - **자주 쓰는 문장** 목록을 누르기 (말뭉치 문장으로 시연)
