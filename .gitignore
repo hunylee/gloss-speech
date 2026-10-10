@@ -1,0 +1,13 @@
+# 데이터 (AI Hub·모두의 말뭉치 원본 1.8GB) — git 대신 별도 백업
+/data/
+# 비밀값·환경
+.env
+*.env
+!.env.example
+.venv/
+__pycache__/
+*.pyc
+# 로그 (요청 문장 등 개인 데이터가 남을 수 있음)
+*.log
+demo/logs/
+.DS_Store

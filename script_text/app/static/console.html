@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수어 자막 콘솔</title>
+<style>
+  :root { --bg:#f6f6f4; --fg:#1b1b1b; --muted:#6b6b6b; --card:#fff; --line:#e2e2de; --accent:#1f6feb; --rec:#d1242f; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#151515; --fg:#eee; --muted:#9a9a9a; --card:#1f1f1f; --line:#333; --accent:#4c8dff; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font-family: system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif; }
+  main { display:grid; grid-template-columns: 1fr 280px; gap:16px; padding:16px; max-width:1100px; margin:0 auto; }
+  @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
+  section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px; }
+  h2 { font-size:15px; margin:0 0 10px; color:var(--muted); font-weight:600; }
+  button { font-size:16px; padding:10px 14px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--fg); cursor:pointer; }
+  button.primary { background:var(--accent); color:#fff; border-color:var(--accent); }
+  button.rec { background:var(--rec); color:#fff; border-color:var(--rec); }
+  #interim { min-height:2.2em; font-size:22px; color:var(--muted); margin-top:10px; }
+  #log { list-style:none; padding:0; margin:10px 0 0; max-height:220px; overflow:auto; font-size:15px; }
+  #log li { padding:6px 0; border-top:1px solid var(--line); }
+  form { display:flex; gap:8px; margin-top:12px; }
+  input, select { flex:1; font-size:16px; padding:10px; border-radius:8px; border:1px solid var(--line); background:var(--bg); color:var(--fg); }
+  #sentences { list-style:none; padding:0; margin:10px 0 0; max-height:320px; overflow:auto; }
+  #sentences li { padding:8px; border-top:1px solid var(--line); cursor:pointer; }
+  #sentences li:hover { background:var(--bg); }
+  #sentences small { color:var(--muted); margin-left:6px; }
+  #qr img { width:100%; background:#fff; border-radius:8px; padding:8px; }
+  #url { font-size:13px; word-break:break-all; color:var(--muted); }
+  .note { font-size:13px; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <div>
+    <section>
+      <h2>음성 인식</h2>
+      <button id="mic" class="primary">마이크 시작</button>
+      <span class="note" id="micNote"></span>
+      <div id="interim"></div>
+      <form id="manual">
+        <input id="text" placeholder="직접 입력해서 보내기" autocomplete="off">
+        <button>보내기</button>
+      </form>
+      <ul id="log"></ul>
+    </section>
+    <section style="margin-top:16px">
+      <h2>자주 쓰는 문장 (눌러서 보내기)</h2>
+      <select id="domain"><option value="">전체 상황</option></select>
+      <ul id="sentences"></ul>
+    </section>
+  </div>
+  <aside>
+    <section id="qr">
+      <h2>태블릿 접속</h2>
+      <img src="/qr.svg" alt="Viewer 접속 QR">
+      <div id="url"></div>
+      <p class="note">연결된 Viewer: <b id="viewers">0</b></p>
+    </section>
+  </aside>
+</main>
+<script>
+// 확정된 문장을 서버로 보내면 서버가 모든 태블릿 Viewer에 전달한다.
+async function send(text) {
+  text = text.trim();
+  if (!text) return;
+  const r = await fetch('/broadcast', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({text})});
+  const {sent} = await r.json();
+  const li = document.createElement('li');
+  li.textContent = `${new Date().toLocaleTimeString()}  ${text}  → Viewer ${sent}대`;
+  document.getElementById('log').prepend(li);
+}
+
+// ----- 마이크: 브라우저 음성인식(Chrome/Edge/Safari, 한국어). 데모용이며 인터넷 연결이 필요하다. -----
+const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+const micBtn = document.getElementById('mic');
+let rec = null, listening = false;
+if (!Rec) {
+  micBtn.disabled = true;
+  document.getElementById('micNote').textContent = '이 브라우저는 음성인식을 지원하지 않아요. Chrome을 쓰거나 아래 문장 목록을 이용하세요.';
+} else {
+  rec = new Rec();
+  rec.lang = 'ko-KR';
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.onresult = e => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const r = e.results[i];
+      if (r.isFinal) send(r[0].transcript); else interim += r[0].transcript;
+    }
+    document.getElementById('interim').textContent = interim;
+  };
+  rec.onend = () => { if (listening) rec.start(); };   // 브라우저가 중간에 끊어도 계속 듣는다
+  rec.onerror = e => { document.getElementById('micNote').textContent = '음성인식 오류: ' + e.error; };
+  micBtn.onclick = () => {
+    listening = !listening;
+    if (listening) { rec.start(); micBtn.textContent = '마이크 중지'; micBtn.className = 'rec'; }
+    else { rec.stop(); micBtn.textContent = '마이크 시작'; micBtn.className = 'primary'; }
+  };
+}
+
+document.getElementById('manual').addEventListener('submit', e => {
+  e.preventDefault();
+  const input = document.getElementById('text');
+  send(input.value);
+  input.value = '';
+});
+
+// ----- 문장 목록 (DB의 상황별 자주 쓰는 문장) -----
+async function loadSentences() {
+  const d = document.getElementById('domain').value;
+  const rows = await (await fetch('/sentences/top?limit=200' + (d ? '&domain=' + d : ''))).json();
+  const ul = document.getElementById('sentences');
+  ul.innerHTML = '';
+  for (const r of rows) {
+    const li = document.createElement('li');
+    li.textContent = r.text;
+    const small = document.createElement('small');
+    small.textContent = r.glosses.join(' · ');
+    li.appendChild(small);
+    li.onclick = () => send(r.text);
+    ul.appendChild(li);
+  }
+}
+(async () => {
+  const sel = document.getElementById('domain');
+  for (const d of await (await fetch('/domains')).json()) sel.add(new Option(d.name_ko, d.code));
+  sel.onchange = loadSentences;
+  loadSentences();
+})();
+
+async function refreshViewer() {
+  const v = await (await fetch('/api/viewer-url')).json();
+  document.getElementById('url').textContent = v.url;
+  document.getElementById('viewers').textContent = v.viewers;
+}
+refreshViewer();
+setInterval(refreshViewer, 3000);
+</script>
+</body>
+</html>

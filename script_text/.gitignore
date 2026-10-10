@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.env
+.venv/
+data/raw/*
+data/media/*
+!data/raw/.gitkeep
+!data/media/.gitkeep
+db/pgdata/
+dist/

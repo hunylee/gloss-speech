@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>농인 자막 데모</title>
+<style>
+  :root { --bg: #111; --fg: #f5f5f5; --muted: #9a9a9a; --accent: #ffd54a; --panel: #1d1d1d; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 system-ui, -apple-system, sans-serif; }
+  main { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
+  h1 { font-size: 20px; margin: 0 0 16px; }
+  form { display: flex; gap: 8px; }
+  input { flex: 1; min-width: 0; font-size: 18px; padding: 10px 12px; border-radius: 8px; border: 1px solid #444; background: var(--panel); color: var(--fg); }
+  button { font-size: 16px; padding: 10px 14px; border-radius: 8px; border: 0; background: var(--accent); color: #111; cursor: pointer; }
+  button.secondary { background: #333; color: var(--fg); }
+  button[aria-pressed="true"] { background: #e53935; color: #fff; }
+  #screen { margin-top: 24px; min-height: 180px; background: #000; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; justify-content: flex-end; }
+  #korean { color: var(--muted); font-size: 16px; min-height: 24px; }
+  #subtitle { font-size: clamp(28px, 6vw, 44px); font-weight: 700; min-height: 1.4em; }
+  #q { color: var(--accent); font-size: 0.7em; margin-left: 12px; }
+  #src { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 999px; background: #333; color: var(--muted); margin-bottom: 6px; }
+  #src.claude { background: #3b2f6b; color: #e2d9ff; }
+  #meta { color: var(--muted); font-size: 13px; margin-top: 8px; min-height: 20px; }
+  #history { margin-top: 24px; padding: 0; list-style: none; }
+  #history li { border-top: 1px solid #2a2a2a; padding: 8px 0; color: var(--muted); }
+  #history b { color: var(--fg); }
+</style>
+</head>
+<body>
+<main>
+  <h1>실시간 농인 자막 데모 (한국어 → 수어 gloss)</h1>
+  <form id="f">
+    <input id="text" placeholder="한국어 문장을 입력하세요 (예: 화장실이 어디에 있나요?)" autocomplete="off" aria-label="한국어 문장">
+    <button type="submit">변환</button>
+    <button type="button" id="mic" class="secondary" aria-pressed="false">🎤 마이크</button>
+  </form>
+  <section id="screen" aria-live="polite">
+    <div><span id="src"></span></div>
+    <div id="korean"></div>
+    <div><span id="subtitle"></span><span id="q"></span></div>
+  </section>
+  <div id="meta"></div>
+  <ul id="history"></ul>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+
+const SKIP_AT = 0.86;  // near-exact corpus match: no Claude call (same threshold as claude_refine.py)
+let seq = 0;          // newest sentence id; late answers for older sentences are ignored
+
+function render(r, label, isClaude) {
+  $("src").textContent = label;
+  $("src").className = isClaude ? "claude" : "";
+  $("subtitle").textContent = r.gloss.length ? r.gloss.join(" · ") : "(gloss 없음)";
+  $("q").textContent = (r.question ? "〔의문 표정〕" : "") + (r.negation ? "〔부정〕" : "");
+}
+
+async function show(text, final = true) {
+  text = text.trim();
+  if (!text) return;
+  const id = ++seq;
+  $("korean").textContent = text;
+  const res = await fetch("/api/translate?q=" + encodeURIComponent(text));
+  if (!res.ok) { $("meta").textContent = "오류: " + res.status; return; }
+  const r = await res.json();
+  if (id !== seq) return;
+  render(r, "규칙 변환", false);
+  $("meta").textContent = `${r.method} ${r.score}` + (r.matched ? ` ≈ ${r.matched}` : "");
+  if (!final) return;
+  const li = document.createElement("li");
+  li.innerHTML = `${escapeHtml(text)} → <b>${escapeHtml(r.subtitle)}</b>`;
+  $("history").prepend(li);
+  if (r.score >= SKIP_AT) return;
+  $("src").textContent = "규칙 변환 · Claude 다듬는 중…";
+  try {
+    const cr = await (await fetch("/api/refine", { method: "POST", headers: { "Content-Type": "application/json" },
+                                                   body: JSON.stringify({ q: text, seq: id }) })).json();
+    if (cr.gloss && cr.gloss.length) {
+      li.innerHTML += ` <span style="color:#c9b8ff">⇒ Claude: ${escapeHtml(cr.subtitle)}${cr.negation ? " 〔부정〕" : ""}</span>`;
+      if (cr.seq !== seq) return;  // a newer sentence is on screen
+      render(cr, "Claude 변환", true);
+      $("meta").textContent = `Claude ${(cr.latency_ms / 1000).toFixed(1)}s` + (cr.time ? ` · 시간: ${cr.time}` : "")
+        + (cr.fingerspell && cr.fingerspell.length ? ` · 지문자: ${cr.fingerspell.join(", ")}` : "");
+    } else if (id === seq) {
+      $("src").textContent = "규칙 변환 (Claude 실패: " + (cr.error || "skipped") + ")";
+    }
+  } catch (e) {
+    if (id === seq) $("src").textContent = "규칙 변환 (Claude 연결 실패)";
+  }
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+$("f").addEventListener("submit", (e) => { e.preventDefault(); show($("text").value); });
+
+// Mic: Chrome Web Speech API, ko-KR, continuous. Each final phrase becomes one subtitle line.
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null;
+$("mic").addEventListener("click", () => {
+  if (!SR) { $("meta").textContent = "이 브라우저는 음성인식을 지원하지 않습니다 (Chrome 사용)."; return; }
+  if (rec) { rec.stop(); return; }
+  rec = new SR();
+  rec.lang = "ko-KR"; rec.continuous = true; rec.interimResults = true;
+  rec.onresult = (e) => {
+    const r = e.results[e.results.length - 1];
+    if (r.isFinal) show(r[0].transcript, true);
+    else $("korean").textContent = r[0].transcript + " …";
+  };
+  rec.onerror = (e) => { $("meta").textContent = "마이크 오류: " + e.error; };
+  rec.onend = () => { rec = null; $("mic").setAttribute("aria-pressed", "false"); };
+  rec.start();
+  $("mic").setAttribute("aria-pressed", "true");
+});
+</script>
+</body>
+</html>

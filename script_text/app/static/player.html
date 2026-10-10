@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수어 Viewer</title>
+<style>
+  :root { --bg:#111; --fg:#f5f5f5; --muted:#9a9a9a; --accent:#ffd34d; --card:#1e1e1e; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font-family: system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+         display:flex; flex-direction:column; height:100vh; }
+  #stage { flex:1; display:flex; align-items:center; justify-content:center; position:relative; min-height:0; }
+  video { max-width:100%; max-height:100%; background:#000; }
+  #placeholder { position:absolute; font-size:clamp(48px, 12vw, 140px); font-weight:700; color:var(--accent); display:none; }
+  #caption { padding:12px 16px; font-size:clamp(20px, 4vw, 36px); text-align:center; min-height:1.6em; }
+  #glosses { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:0 16px 12px; }
+  .g { padding:4px 10px; border-radius:6px; background:var(--card); color:var(--muted); font-size:18px; }
+  .g.now { background:var(--accent); color:#111; }
+  .g.missing { border:1px dashed var(--muted); }
+  form { display:flex; gap:8px; padding:12px 16px; background:var(--card); }
+  input { flex:1; font-size:18px; padding:10px; border-radius:6px; border:0; }
+  button { font-size:18px; padding:10px 16px; border-radius:6px; border:0; background:var(--accent); }
+  #meta { color:var(--muted); font-size:14px; text-align:center; padding-bottom:8px; }
+  body.live form { display:none; }
+  #conn { position:fixed; top:10px; right:12px; font-size:13px; color:var(--muted); display:none; }
+  body.live #conn { display:block; }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <video id="video" muted playsinline></video>
+    <div id="placeholder"></div>
+  </div>
+  <div id="caption"></div>
+  <div id="glosses"></div>
+  <div id="meta"></div>
+  <div id="conn">연결 중…</div>
+  <form id="form">
+    <input id="text" placeholder="문장을 입력하세요 (예: 어디가 아프세요?)" autocomplete="off">
+    <button>재생</button>
+  </form>
+<script>
+// 문장 → /gloss → 클립을 순서대로 재생. 클립 파일이 없는 gloss는 글자 카드로 대신 보여준다.
+// 3단계에서 WebSocket으로 들어오는 STT 문장도 같은 play()를 쓴다.
+const video = document.getElementById('video');
+const placeholder = document.getElementById('placeholder');
+const PLACEHOLDER_MS = 900;
+const LOAD_TIMEOUT_MS = 4000;
+let runId = 0;
+
+async function play(text) {
+  const id = ++runId;
+  const res = await fetch('/gloss', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({text})});
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const data = await res.json();
+  document.getElementById('caption').textContent = text;
+  document.getElementById('meta').textContent =
+    {sentence:'문장 일치', word:'어절 단위 변환', none:'변환할 수 있는 단어가 없어요'}[data.mode] +
+    (data.unknown.length ? ` · 모르는 단어: ${data.unknown.join(', ')}` : '');
+  const box = document.getElementById('glosses');
+  box.innerHTML = '';
+  const chips = data.clips.map(c => {
+    const el = document.createElement('span');
+    el.className = 'g' + (c.url ? '' : ' missing');
+    el.textContent = c.label;
+    box.appendChild(el);
+    return el;
+  });
+  for (let i = 0; i < data.clips.length; i++) {
+    if (id !== runId) return;               // 새 문장이 들어오면 중단
+    chips.forEach((el, j) => el.classList.toggle('now', i === j));
+    await playClip(data.clips[i]);
+  }
+  chips.forEach(el => el.classList.remove('now'));
+}
+
+function playClip(clip) {
+  return new Promise(resolve => {
+    let settled = false;
+    const finish = () => { if (!settled) { settled = true; resolve(); } };
+    const showCard = () => {
+      video.style.visibility = 'hidden';
+      placeholder.textContent = clip.label;
+      placeholder.style.display = 'block';
+      setTimeout(() => { placeholder.style.display = 'none'; finish(); }, PLACEHOLDER_MS);
+    };
+    if (!clip.url) return showCard();
+    const start = (clip.start_ms ?? 0) / 1000;
+    const end = clip.end_ms != null ? clip.end_ms / 1000 : null;
+    const cleanup = () => { video.removeEventListener('timeupdate', onTime); video.onended = video.onerror = video.onloadedmetadata = null; };
+    const onTime = () => { if (end != null && video.currentTime >= end) { video.pause(); cleanup(); finish(); } };
+    let failed = false;
+    const fail = () => { if (failed || settled) return; failed = true; cleanup(); video.pause(); showCard(); };
+    video.style.visibility = 'visible';
+    video.onerror = fail;
+    video.onended = () => { cleanup(); finish(); };
+    video.addEventListener('timeupdate', onTime);
+    // 메타데이터가 로드된 뒤에 구간 시작점으로 이동해야 Safari에서도 seek가 먹는다
+    video.onloadedmetadata = () => { video.currentTime = start; video.play().catch(fail); };
+    // 로드가 멈추면(느린 네트워크 등) 큐가 서지 않도록 일정 시간 뒤 글자 카드로 넘어간다
+    setTimeout(() => { if (video.readyState < 2) fail(); }, LOAD_TIMEOUT_MS);
+    video.src = clip.url;
+  });
+}
+
+// ----- 태블릿 Viewer 모드 (/viewer): 콘솔이 보낸 문장을 순서대로 재생 -----
+const queue = [];
+let busy = false;
+async function drain() {
+  if (busy) return;
+  busy = true;
+  try {
+    while (queue.length) {
+      try { await play(queue.shift()); }
+      catch (err) { document.getElementById('meta').textContent = '변환 실패: ' + err; }   // 한 문장이 실패해도 다음 문장은 계속
+    }
+  } finally { busy = false; }
+}
+
+function connect() {
+  const conn = document.getElementById('conn');
+  const ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws/viewer');
+  ws.onopen = () => { conn.textContent = '● 연결됨'; };
+  ws.onmessage = e => {
+    const msg = JSON.parse(e.data);
+    if (msg.type === 'text') { queue.push(msg.text); drain(); }
+  };
+  ws.onclose = () => { conn.textContent = '○ 다시 연결 중…'; setTimeout(connect, 1500); };
+}
+
+if (location.pathname === '/viewer') {
+  document.body.classList.add('live');
+  connect();
+}
+
+document.getElementById('form').addEventListener('submit', e => {
+  e.preventDefault();
+  const t = document.getElementById('text').value.trim();
+  if (t) play(t);
+});
+</script>
+</body>
+</html>
