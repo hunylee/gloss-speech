@@ -93,6 +93,14 @@ def create_app(corpus: Corpus | None = None, agent=None, clock=time.monotonic,
     async def phrase(room: str, order: int):
         return await pipe.phrase(room, pipe.session(room).domain, order)
 
+    @app.get("/api/fixed")
+    def fixed_list():
+        return [{"id": f.id, "title": f.title} for f in corpus.fixed]
+
+    @app.post("/api/rooms/{room}/fixed/{fixed_id}")
+    async def fixed(room: str, fixed_id: str):
+        return await pipe.fixed(room, fixed_id)
+
     @app.post("/api/translate")
     def translate(body: TextIn, domain: str = "protestant"):
         from app.gloss import Session

@@ -58,6 +58,10 @@
       <div id="viewers" style="margin-top:6px;color:#555"></div>
     </section>
     <section style="margin-top:16px">
+      <h2>고정 본문 (검수된 전문 수어 영상 송출 · 낭독 중 줄 번역은 자동으로 멈춤)</h2>
+      <div class="row" id="fixed"></div>
+    </section>
+    <section style="margin-top:16px">
       <h2>3. 상위 문장 10개 (순서상 다음 문장 · 검수된 gloss로 바로 송출)</h2>
       <div id="sugg"></div>
     </section>
@@ -90,7 +94,7 @@ async function loadSugg() {
 }
 function log(p) {
   if (!p) return;
-  for (const x of (Array.isArray(p) ? p : [p])) {
+  for (const x of (Array.isArray(p) ? p : [p]).filter(x => x && x.glosses)) {
     const d = document.createElement('div'); d.className = 'pk' + (x.low_confidence ? ' low' : '');
     d.innerHTML = `<div>${x.text}</div><div class="g">${x.glosses.join(' ')}</div>` +
       `<div class="m">${x.mode} · 신뢰도 ${x.confidence} · 수어 ${(x.total_ms/1000).toFixed(1)}초` +
@@ -101,6 +105,11 @@ function log(p) {
 (async () => {
   const doms = await api('/api/domains');
   for (const [k, v] of Object.entries(doms)) $('domain').add(new Option(v, k));
+  for (const f of await api('/api/fixed')) {
+    const b = document.createElement('button'); b.textContent = f.title + ' 전문';
+    b.onclick = async () => log(await post(`/api/rooms/${room()}/fixed/${f.id}`));
+    $('fixed').appendChild(b);
+  }
   loadSession();
 })();
 $('domain').onchange = async () => { await post(`/api/rooms/${room()}/session`, { domain:$('domain').value }); loadSugg(); };

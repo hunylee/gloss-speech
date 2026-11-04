@@ -382,3 +382,78 @@ surface,gloss,domain,kind
 알,알다,*,v
 보,보다,*,v
 되,되다,*,v
+# --- 성경 66권 (아가는 일반어와 겹쳐 제외). 수어 단어 검수 전이라 지문자로 표시 ---
+창세기,FS:창세기,protestant,n
+출애굽기,FS:출애굽기,protestant,n
+레위기,FS:레위기,protestant,n
+민수기,FS:민수기,protestant,n
+신명기,FS:신명기,protestant,n
+여호수아,FS:여호수아,protestant,n
+사사기,FS:사사기,protestant,n
+룻기,FS:룻기,protestant,n
+사무엘상,FS:사무엘상,protestant,n
+사무엘하,FS:사무엘하,protestant,n
+열왕기상,FS:열왕기상,protestant,n
+열왕기하,FS:열왕기하,protestant,n
+역대상,FS:역대상,protestant,n
+역대하,FS:역대하,protestant,n
+에스라,FS:에스라,protestant,n
+느헤미야,FS:느헤미야,protestant,n
+에스더,FS:에스더,protestant,n
+욥기,FS:욥기,protestant,n
+시편,FS:시편,protestant,n
+잠언,FS:잠언,protestant,n
+전도서,FS:전도서,protestant,n
+이사야,FS:이사야,protestant,n
+예레미야,FS:예레미야,protestant,n
+예레미야애가,FS:예레미야애가,protestant,n
+에스겔,FS:에스겔,protestant,n
+다니엘,FS:다니엘,protestant,n
+호세아,FS:호세아,protestant,n
+요엘,FS:요엘,protestant,n
+아모스,FS:아모스,protestant,n
+오바댜,FS:오바댜,protestant,n
+요나,FS:요나,protestant,n
+미가,FS:미가,protestant,n
+나훔,FS:나훔,protestant,n
+하박국,FS:하박국,protestant,n
+스바냐,FS:스바냐,protestant,n
+학개,FS:학개,protestant,n
+스가랴,FS:스가랴,protestant,n
+말라기,FS:말라기,protestant,n
+마태복음,FS:마태복음,protestant,n
+마가복음,FS:마가복음,protestant,n
+누가복음,FS:누가복음,protestant,n
+요한복음,FS:요한복음,protestant,n
+사도행전,FS:사도행전,protestant,n
+로마서,FS:로마서,protestant,n
+고린도전서,FS:고린도전서,protestant,n
+고린도 전서,FS:고린도전서,protestant,m
+고린도후서,FS:고린도후서,protestant,n
+고린도 후서,FS:고린도후서,protestant,m
+갈라디아서,FS:갈라디아서,protestant,n
+에베소서,FS:에베소서,protestant,n
+빌립보서,FS:빌립보서,protestant,n
+골로새서,FS:골로새서,protestant,n
+데살로니가전서,FS:데살로니가전서,protestant,n
+데살로니가 전서,FS:데살로니가전서,protestant,m
+데살로니가후서,FS:데살로니가후서,protestant,n
+데살로니가 후서,FS:데살로니가후서,protestant,m
+디모데전서,FS:디모데전서,protestant,n
+디모데 전서,FS:디모데전서,protestant,m
+디모데후서,FS:디모데후서,protestant,n
+디모데 후서,FS:디모데후서,protestant,m
+디도서,FS:디도서,protestant,n
+빌레몬서,FS:빌레몬서,protestant,n
+히브리서,FS:히브리서,protestant,n
+야고보서,FS:야고보서,protestant,n
+베드로전서,FS:베드로전서,protestant,n
+베드로 전서,FS:베드로전서,protestant,m
+베드로후서,FS:베드로후서,protestant,n
+베드로 후서,FS:베드로후서,protestant,m
+요한일서,FS:요한일서,protestant,n
+요한이서,FS:요한이서,protestant,n
+요한삼서,FS:요한삼서,protestant,n
+유다서,FS:유다서,protestant,n
+요한계시록,FS:요한계시록,protestant,n
+# 서술격·연결 꼬리 (책 이름·명사 뒤)

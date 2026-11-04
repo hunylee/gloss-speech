@@ -26,6 +26,7 @@ JOSA = {
     "로", "으로", "와", "과", "랑", "이랑", "하고", "부터", "까지", "보다", "처럼", "요", "이다",
     "입니다", "이에요", "예요", "에는", "에서는", "으로는", "로는", "에도", "께서는", "으로써", "이며",
     "들", "들은", "들을", "들이", "들의", "님", "님의", "님께", "님께서", "님은", "님이", "이나", "나",
+    "인데", "이고", "이며", "이지만", "이었고", "이었다", "였다", "였고", "이에", "에서도", "에게서", "으로서", "로서",
 }
 ENDING_HEADS = set("세시셔셨아어았었여였겠고는니면자지기러려며게도요습ㅂ으은을ㄴ나냐네")
 HADA_HEADS = ("하", "해", "했", "합", "할", "한", "함", "드", "되", "됩", "됐", "돼")
@@ -34,6 +35,25 @@ IMPERATIVE = ("십시오", "세요", "소서")
 QUESTION_END = re.compile(r"(\?|까요?|나요|가요|니까|습니까|ㄹ까)\s*$")
 NUM_SPLIT = re.compile(r"(\d+)")
 
+
+_KIWI = None
+
+
+def kiwi():
+    """한국어 형태소 분석기(kiwipiepy). 설치돼 있지 않으면 None → 기존 규칙만 사용."""
+    global _KIWI
+    if _KIWI is None:
+        try:
+            from kiwipiepy import Kiwi
+            _KIWI = Kiwi()
+        except Exception:
+            _KIWI = False
+    return _KIWI or None
+
+
+SKIP_TAGS = ("J", "E", "S", "XSV", "XSA", "XSN", "XPN", "VCP", "IC")
+SKIP_NNB = {"것", "수", "번", "등", "거", "데", "줄", "뿐", "중", "게", "바", "분"}
+NEG_VX = {"않": ["아니다"], "못하": ["못하다"], "말": ["아니다"]}
 
 ENDINGS = re.compile(r"^(습니다|습니까|ㅂ니다|니다|어요|아요|다|요|고|며|면|겠습니다|겠습니까)$")
 
@@ -169,6 +189,13 @@ class Translator:
                     after = rest[i + len(surface):]
                     frag = after.split(" ", 1)[0]
                     if frag and not _droppable_tail(frag):
+                        if self._match_word(frag, session.domain, ctx) is not None:
+                            # '다음 주예배는'처럼 띄어쓰기만 붙은 경우: 표현을 치환하고 뒤 어절은 따로 둔다
+                            if buf + rest[:i]:
+                                out.append(buf + rest[:i])
+                            out.append((gloss,))
+                            buf, rest = "", " " + after
+                            continue
                         buf += rest[:i + len(surface)]
                         rest = after
                         continue
@@ -200,12 +227,24 @@ class Translator:
                     continue
                 g = self._match_word(word, session.domain, ctx)
                 if g is None:
-                    g = self._segment(word, session.domain, ctx)  # 붙어 버린 어절 나누기
+                    g = self._segment(word, session.domain, ctx, allow_fs=False)  # 붙어 버린 어절 나누기
                 if g is None:
                     g = self._fuzzy(word, session.domain, ctx)     # STT 오인식 보정 (자모 1~2개 차이)
                     if g is not None:
                         known += 0.5; total += 1; glosses += g
                         continue
+                if g is None:
+                    k = self._kiwi(word, session.domain, ctx)      # 형태소 분석: 활용형 → 원형
+                    if k is not None:
+                        kg, k_known, k_unk = k
+                        glosses += kg
+                        known += k_known; total += k_known + len(k_unk)
+                        unknown += k_unk
+                        if word.endswith(IMPERATIVE) and "부탁" not in kg:
+                            glosses.append("부탁")
+                        continue
+                if g is None:
+                    g = self._segment(word, session.domain, ctx)   # 모르는 뒷부분은 지문자로
                     stem = self._strip_josa(word)
                     glosses.append(f"FS:{stem}")
                     unknown.append(word); total += 1
@@ -245,7 +284,7 @@ class Translator:
             for e in lex[prefix]:
                 if e.domain not in ("*", domain):
                     continue
-                if e.kind == "n" and (rest in JOSA or rest.startswith(HADA_HEADS)):
+                if e.kind == "n" and (rest in JOSA or (rest.startswith(HADA_HEADS) and rest not in lex)):
                     ok.append(e)
                 elif e.kind == "v" and (len(prefix) >= 2 or rest[0] in ENDING_HEADS):
                     ok.append(e)
@@ -253,7 +292,8 @@ class Translator:
                 return self._pick(ok, domain, ctx)
         return None
 
-    def _segment(self, word: str, domain: str, ctx: set[str], depth: int = 0) -> list[str] | None:
+    def _segment(self, word: str, domain: str, ctx: set[str], depth: int = 0,
+                 allow_fs: bool = True) -> list[str] | None:
         """'지금부터법회를' → '지금부터' + '법회를'. 왼쪽을 길게 잡는 순서로 최대 3조각."""
         if depth > 1 or len(word) < 3:
             return None
@@ -263,16 +303,61 @@ class Translator:
                 continue
             right = self._match_word(word[k:], domain, ctx)
             if right is None:
-                right = self._segment(word[k:], domain, ctx, depth + 1)
+                right = self._segment(word[k:], domain, ctx, depth + 1, allow_fs)
             if right is not None and (left or right):
                 return left + right
-        if depth == 0:
+        if depth == 0 and allow_fs:
             # 오른쪽이 사전에 없는 말이면(성경 책 이름·인명 등) 버리지 말고 지문자로 남긴다
             for k in range(len(word) - 2, 1, -1):
                 left = self._match_word(word[:k], domain, ctx)
                 if left:
                     return left + [f"FS:{self._strip_josa(word[k:])}"]
         return None
+
+    def _kiwi(self, word: str, domain: str, ctx: set[str]):
+        """어절을 형태소로 나눠 체언·용언 원형을 사전과 맞춘다.
+        반환: (gloss 목록, 사전에서 찾은 개수, 못 찾은 원형 목록) / 분석기 없으면 None"""
+        kw = kiwi()
+        if kw is None:
+            return None
+        if not getattr(self, "_kiwi_words", False):            # 성경 책 이름·고유명사가 쪼개지지 않게
+            for e in self.corpus.lexicon:
+                if e.kind == "n" and len(e.surface) >= 2 and e.gloss and e.gloss[0].startswith("FS:"):
+                    kw.add_user_word(e.surface, "NNP")
+            self._kiwi_words = True
+        toks = [(t.form, t.tag) for t in kw.tokenize(word)]
+        out, known, unk = [], 0, []
+        i = 0
+        while i < len(toks):
+            form, tag = toks[i]
+            if tag == "NP" and i + 1 < len(toks) and toks[i + 1] == ("들", "XSN"):
+                form, i = form + "들", i + 1                          # 그+들 → 그들
+            i += 1
+            if tag.startswith(SKIP_TAGS) or (tag == "NNB" and form in SKIP_NNB):
+                continue
+            if tag == "VCN":                                          # 아니다
+                out.append("아니다"); known += 1; continue
+            if tag == "SN":
+                out.append(form); known += 1; continue
+            if tag == "VX":                                           # 보조용언: 부정만 남긴다
+                if form in NEG_VX:
+                    out += NEG_VX[form]; known += 1
+                continue
+            g = self._match_word(form, domain, ctx)
+            if g is None and tag in ("VV", "VA"):
+                g = self._match_word(form + "다", domain, ctx)
+                if g is None and form + "다" in self.corpus.vocab:
+                    g = [form + "다"]
+            if g is None and tag.startswith("N") and form in self.corpus.vocab:
+                g = [form]
+            if g is not None:
+                out += g; known += 1 if g else 0
+                continue
+            if tag in ("MM", "MAJ"):                                  # 모르는 관형사·접속부사는 버린다
+                continue
+            lemma = form + "다" if tag in ("VV", "VA") else form
+            out.append(f"FS:{lemma}"); unk.append(lemma)
+        return out, known, unk
 
     def _fuzzy(self, word: str, domain: str, ctx: set[str]) -> list[str] | None:
         """사전에 없는 어절을 자모 편집거리로 가장 가까운 표기에 맞춘다.

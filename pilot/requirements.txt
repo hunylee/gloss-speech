@@ -8,3 +8,4 @@ pytest>=8
 # 선택: 서버 오디오 입력 STT (STT=whisper 로 켬)
 # faster-whisper
 # numpy
+kiwipiepy>=0.20      # 한국어 형태소 분석 (없으면 규칙만으로 동작)

@@ -44,6 +44,24 @@ class LexEntry:
 
 
 @dataclass
+class FixedText:
+    """매주 똑같이 낭독하는 본문(사도신경·주기도문). 본문 전체는 저장하지 않고 시작 문구·특징 단어로 알아본다."""
+    id: str
+    title: str
+    triggers: list[str]
+    keywords: list[str]
+    clip: str
+    dur_ms: int
+    lock_s: float
+
+    def is_start(self, key: str) -> bool:
+        return any(t in key for t in self.triggers)
+
+    def hits(self, key: str) -> int:
+        return sum(1 for k in self.keywords if k in key)
+
+
+@dataclass
 class Corpus:
     domains: dict[str, str]
     phrases: list[Phrase]
@@ -52,6 +70,7 @@ class Corpus:
     by_surface: dict[str, list[LexEntry]] = field(default_factory=dict)
     mwe: list[LexEntry] = field(default_factory=list)
     vocab: set[str] = field(default_factory=set)
+    fixed: list[FixedText] = field(default_factory=list)
 
     def __post_init__(self):
         for e in self.lexicon:
@@ -79,7 +98,12 @@ class Corpus:
                    for r in csv.DictReader(rows) if r["domain"] in ("*", *domains)]
         clips_path = root / "clips.json"
         clips = json.loads(clips_path.read_text(encoding="utf-8")) if clips_path.exists() else {}
-        return cls(domains, phrases, lexicon, clips)
+        fixed = []
+        if (root / "fixed_texts.csv").exists():
+            with open(root / "fixed_texts.csv", encoding="utf-8") as f:
+                fixed = [FixedText(r["id"], r["title"], r["trigger"].split("|"), r["keywords"].split("|"),
+                                   r["clip"], int(r["dur_ms"]), float(r["lock_s"])) for r in csv.DictReader(f)]
+        return cls(domains, phrases, lexicon, clips, fixed=fixed)
 
     def top_phrases(self, domain: str, limit: int = 10, after_order: int = 0) -> list[Phrase]:
         """콘솔에 띄울 '이 상황에서 다음에 나올 가능성이 큰 문장' 목록 (예배 순서 기준)."""

@@ -82,3 +82,28 @@ def test_end_to_end_websocket_broadcast():
         cap = v.receive_json(); sign = v.receive_json()
         assert cap["type"] == "caption.final" and sign["type"] == "sign"
         assert sign["glosses"] == ["헌금", "시간"] and sign["seq"] == cap["seq"] + 1
+
+
+def test_kiwi_lemmatizes_conjugations():
+    g = tr("하나님의 사랑은 변하지 않습니다.").glosses
+    assert g == ["하나님", "사랑", "변하다", "아니다"]
+    assert "FS:쓰다" in tr("편지를 쓰고 있습니다").glosses          # 모르는 동사는 원형 지문자
+
+
+def test_bible_books_stay_whole():
+    assert tr("이제 베드로전서인데 그래서 베드로 전서 1장 1절입니다").glosses.count("FS:베드로전서") == 2
+    assert "FS:베드로" not in tr("우리가 읽었던 베드로 전서입니다").glosses
+
+
+def test_creed_recitation_sends_one_fixed_clip_and_holds_lines():
+    client = TestClient(create_app(C))
+    txt = ("나는 전능하신 아버지 하나님 천지의 창조주를 믿습니다. "
+           "그는 성령으로 잉태되어 마리아에게서 나시고 빌라도에게 고난을 받아 십자가에 못박혀 죽으시고. "
+           "아멘. 이제 함께 기도하겠습니다.")
+    out = client.post("/api/rooms/c/text", json={"text": txt}).json()
+    assert [p["mode"] for p in out] == ["fixed", "fixed-hold", "fixed-hold", "rules"]
+
+
+def test_spacing_merged_after_expression():
+    assert tr("다음 주예배는 오전 11시에 시작합니다").glosses[:2] == ["다음주", "예배"]
+    assert tr("설교 후함께 기도하겠습니다").glosses == ["설교", "끝", "함께", "기도"]

@@ -32,6 +32,7 @@ class Pipeline:
         self.clocks: dict[str, RoomClock] = {}
         self.timings_ms: list[float] = []          # 번역+계획 처리 시간
         self._last_partial: dict[str, float] = {}
+        self._fixed_lock: dict[str, tuple] = {}        # room → (FixedText, 잠금 끝 시각)
 
     def session(self, room: str) -> Session:
         return self.sessions.setdefault(room, Session())
@@ -50,11 +51,55 @@ class Pipeline:
         out = []
         for sent in split_sentences(text):
             await self.hub.broadcast(room, {"type": "caption.final", "text": sent, "t_speech": t_speech_end})
+            fixed = self._fixed_check(room, sent)
+            if fixed == "hold":                       # 낭독 중인 줄: 자막만, 수어는 이미 나간 검수 영상이 맡음
+                out.append({"type": "hold", "text": sent, "mode": "fixed-hold"})
+                continue
+            if fixed is not None:
+                out.append(await self.fixed(room, fixed.id, caption=False))
+                continue
             t0 = time.perf_counter()
             # Agent(LLM) 호출이 블로킹이어도 이벤트 루프(다른 방송)를 막지 않도록 스레드에서 실행
             result = await asyncio.to_thread(self.translator.translate, sent, self.session(room))
             out.append(await self._emit(room, result, t0, t_speech_end))
         return out
+
+    def _fixed_check(self, room: str, sent: str):
+        from app.corpus import normalize
+        key = normalize(sent)
+        lock = self._fixed_lock.get(room)
+        if lock and self.clock() <= lock[1]:
+            ft = lock[0]
+            if ft.hits(key) >= 2 or key.strip() in ("아멘", "아멘 아멘") or ft.is_start(key):
+                return "hold"
+            self._fixed_lock.pop(room, None)          # 본문과 상관없는 말이 나오면 낭독이 끝난 것
+        if self.session(room).domain != "protestant":
+            return None
+        for ft in self.corpus.fixed:
+            if ft.is_start(key) and (ft.hits(key) >= 1 or "고백" in key or ft.triggers[0] in key):
+                return ft
+        return None
+
+    async def fixed(self, room: str, fixed_id: str, caption: bool = True) -> dict | None:
+        """사도신경·주기도문: 검수된 전문 수어 영상 하나를 보낸다 (콘솔 버튼 또는 자동 감지)."""
+        ft = next((f for f in self.corpus.fixed if f.id == fixed_id), None)
+        if ft is None:
+            return None
+        self._fixed_lock[room] = (ft, self.clock() + ft.lock_s)
+        text = f"{ft.title} — 함께 고백합니다"
+        if caption:
+            await self.hub.broadcast(room, {"type": "caption.final", "text": text, "t_speech": None})
+        src = None
+        if self.media_root is not None and (self.media_root / ft.clip).is_file():
+            src = f"/media/{ft.clip}"
+        t0 = time.perf_counter()
+        sched = self.room_clock(room).schedule(ft.dur_ms, self.clock())
+        self.timings_ms.append((time.perf_counter() - t0) * 1000)
+        return await self.hub.broadcast(room, {
+            "type": "sign", "text": text, "glosses": [ft.title], "mode": "fixed", "confidence": 1.0,
+            "question": False, "unknown": [], "context": [], "low_confidence": False,
+            "playlist": [{"gloss": ft.title + " (전문)", "kind": "clip", "dur_ms": ft.dur_ms, "src": src}],
+            "total_ms": ft.dur_ms, **sched, "t_speech": None})
 
     async def phrase(self, room: str, domain: str, order: int) -> dict | None:
         """콘솔의 '상위 문장 10개' 버튼: 검수된 gloss를 그대로 보낸다 (mode=verified)."""
