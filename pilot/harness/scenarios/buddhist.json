@@ -1,0 +1,209 @@
+{
+ "domain": "buddhist",
+ "utterances": [
+  {
+   "text": "지금부터 법회를 시작하겠습니다.",
+   "gold": "지금 법회 시작",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "법회를 시작하겠습니다.",
+   "gold": "법회 시작",
+   "category": "paraphrase",
+   "split": "dev"
+  },
+  {
+   "text": "신도 여러분 반갑습니다.",
+   "gold": "신도 여러분 반갑다",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "다 함께 합장하겠습니다.",
+   "gold": "모두 함께 합장",
+   "category": "paraphrase",
+   "split": "dev"
+  },
+  {
+   "text": "삼귀의를 하겠습니다.",
+   "gold": "삼귀의",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "반야심경 독송이 있겠습니다.",
+   "gold": "반야심경 독송",
+   "category": "paraphrase",
+   "split": "dev"
+  },
+  {
+   "text": "모두 합장해 주십시오.",
+   "gold": "모두 합장 부탁",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "스님의 법문을 듣겠습니다.",
+   "gold": "스님 법문 듣다",
+   "category": "paraphrase",
+   "split": "dev"
+  },
+  {
+   "text": "반야심경을 함께 독송하겠습니다.",
+   "gold": "반야심경 함께 독송",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "부처님께 삼배 올리겠습니다.",
+   "gold": "부처님 삼배",
+   "category": "paraphrase",
+   "split": "dev"
+  },
+  {
+   "text": "부처님께 삼배를 올리겠습니다.",
+   "gold": "부처님 삼배",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "법당에서는 휴대폰을 꺼 주세요.",
+   "gold": "법당 휴대폰 끄다 부탁",
+   "category": "paraphrase",
+   "split": "holdout"
+  },
+  {
+   "text": "입정하겠습니다.",
+   "gold": "입정",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "점심 공양은 공양간에서 합니다.",
+   "gold": "점심 공양 공양간",
+   "category": "paraphrase",
+   "split": "holdout"
+  },
+  {
+   "text": "죽비 소리에 맞추어 절을 하겠습니다.",
+   "gold": "죽비 소리 맞추다 절",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "연등 접수는 종무소에서 받습니다.",
+   "gold": "연등 접수 종무소",
+   "category": "paraphrase",
+   "split": "holdout"
+  },
+  {
+   "text": "큰스님의 법문이 있겠습니다.",
+   "gold": "큰스님 법문",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "다음 법회는 보름에 있습니다.",
+   "gold": "다음 법회 보름 있다",
+   "category": "paraphrase",
+   "split": "holdout"
+  },
+  {
+   "text": "발원문을 낭독하겠습니다.",
+   "gold": "발원문 읽다",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "찬불가를 부르겠습니다.",
+   "gold": "찬불가 노래",
+   "category": "paraphrase",
+   "split": "holdout"
+  },
+  {
+   "text": "찬불가를 함께 부르겠습니다.",
+   "gold": "찬불가 함께 노래",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "마음을 비우면 괴로움이 줄어듭니다.",
+   "gold": "마음 비우다 괴로움 줄다",
+   "category": "free",
+   "split": "dev"
+  },
+  {
+   "text": "사홍서원으로 법회를 마치겠습니다.",
+   "gold": "사홍서원 법회 끝",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "모든 생명은 소중합니다.",
+   "gold": "모든 생명 소중",
+   "category": "free",
+   "split": "dev"
+  },
+  {
+   "text": "모두 성불하십시오.",
+   "gold": "모두 성불 바라다",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "부처님의 가르침을 생활 속에서 실천합시다.",
+   "gold": "부처님 가르침 생활 실천",
+   "category": "free",
+   "split": "dev"
+  },
+  {
+   "text": "법당 안에서는 조용히 해 주십시오.",
+   "gold": "법당 안 조용 부탁",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "욕심을 버리고 자비로운 마음을 가집시다.",
+   "gold": "욕심 버리다 자비 마음 가지다",
+   "category": "free",
+   "split": "holdout"
+  },
+  {
+   "text": "공양은 법회 후 공양간에서 합니다.",
+   "gold": "법회 끝 공양간 공양",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "지금 이 순간에 집중하십시오.",
+   "gold": "지금 순간 집중 부탁",
+   "category": "free",
+   "split": "holdout"
+  },
+  {
+   "text": "초파일 연등 접수를 받습니다.",
+   "gold": "부처님오신날 연등 접수",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "모두 건강하고 행복하시길 바랍니다.",
+   "gold": "모두 건강 행복 바라다",
+   "category": "free",
+   "split": "holdout"
+  },
+  {
+   "text": "기도 접수는 종무소에서 하시면 됩니다.",
+   "gold": "기도 접수 종무소",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "다음 법회는 음력 초하루에 있습니다.",
+   "gold": "다음 법회 음력 초하루 있다",
+   "category": "fixed",
+   "split": "fixed"
+  }
+ ]
+}

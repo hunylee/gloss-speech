@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SyncSL 수어 Viewer</title>
+<style>
+  :root { --bg:#0f1115; --fg:#f4f5f7; --mute:#9aa3ae; --acc:#ffcf4a; --card:#1b1f27; --warn:#ff8a65; --fs:1; }
+  body.hc { --bg:#000; --fg:#fff; --mute:#ddd; --acc:#ffe600; --card:#111; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; background:var(--bg); color:var(--fg);
+    font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif; }
+  .app { display:grid; grid-template-rows:auto 1fr auto auto auto; height:100dvh; padding:12px; gap:10px; }
+  header { display:flex; justify-content:space-between; align-items:center; font-size:14px; color:var(--mute); }
+  #conn.ok { color:#7bd88f; } #conn.bad { color:var(--warn); }
+  .stage { position:relative; background:var(--card); border-radius:18px; overflow:hidden;
+    display:flex; align-items:center; justify-content:center; min-height:40vh; }
+  video { width:100%; height:100%; object-fit:contain; display:none; }
+  .card { text-align:center; padding:20px; }
+  .card .word { font-size:calc(72px * var(--fs)); font-weight:800; letter-spacing:-1px; }
+  .card .kind { margin-top:10px; font-size:15px; color:var(--mute); }
+  .badge { position:absolute; top:12px; padding:4px 10px; border-radius:999px; font-size:14px; font-weight:700; }
+  #qBadge { right:12px; background:var(--acc); color:#000; display:none; }
+  #lowBadge { left:12px; background:var(--warn); color:#000; display:none; }
+  .gloss { min-height:1.6em; font-size:calc(30px * var(--fs)); font-weight:700; line-height:1.4; }
+  .gloss span { margin-right:.45em; opacity:.55; } .gloss span.on { opacity:1; color:var(--acc); }
+  .caption { background:#00000066; border-radius:12px; padding:10px 14px; min-height:3.2em;
+    font-size:calc(22px * var(--fs)); line-height:1.45; }
+  .caption .prev { color:var(--mute); display:block; } .caption .partial { color:var(--mute); }
+  .ctrl { display:flex; gap:8px; flex-wrap:wrap; }
+  .ctrl button { flex:1; min-height:48px; font-size:16px; border:0; border-radius:12px; background:var(--card); color:var(--fg); }
+  .ctrl button[aria-pressed="false"] { opacity:.5; }
+  .hide { display:none !important; }
+</style>
+</head>
+<body>
+<div class="app">
+  <header><span id="room">SyncSL</span><span id="conn" class="bad" aria-live="polite">○ 연결 중…</span></header>
+  <section class="stage" aria-label="수어 영상">
+    <video id="vid" muted playsinline></video>
+    <div class="card" id="card"><div class="word" id="word">대기 중</div><div class="kind" id="kind">말씀이 시작되면 수어가 나옵니다</div></div>
+    <span class="badge" id="qBadge">? 질문</span>
+    <span class="badge" id="lowBadge">부분 번역 · 자막 함께 보기</span>
+  </section>
+  <div class="gloss" id="gloss" aria-label="수어 gloss 자막"></div>
+  <div class="caption" id="caption" aria-live="polite" aria-label="한국어 자막"><span class="prev" id="prev"></span><span id="cur"></span><span class="partial" id="partial"></span></div>
+  <div class="ctrl">
+    <button id="bGloss" aria-pressed="true">Gloss 자막</button>
+    <button id="bKo" aria-pressed="true">한국어 자막</button>
+    <button id="bSmall">글자 −</button><button id="bBig">글자 +</button>
+    <button id="bHc" aria-pressed="false">고대비</button>
+  </div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+const room = params.get('room') || 'main';
+$('room').textContent = 'SyncSL · ' + room;
+const KIND = { clip:'수어 클립', fingerspell:'지문자', card:'글자 카드', number:'숫자 수어' };
+const TRANSITION_MS = 120;
+let lastSeq = 0, queue = [], playing = false, gen = 0, fs = 1;
+
+function setCaption(text) { $('prev').textContent = $('cur').textContent; $('cur').textContent = text; $('partial').textContent = ''; }
+function showGloss(p, idx) {
+  const g = $('gloss'); g.innerHTML = '';
+  p.playlist.forEach((it, i) => { if (it.kind === 'marker') return;
+    const s = document.createElement('span'); s.textContent = it.kind === 'fingerspell' ? '지문자:' + it.gloss : it.gloss;
+    if (i === idx) s.className = 'on'; g.appendChild(s); });
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function showItem(it, rate) {
+  const v = $('vid');
+  if (it.src) {
+    $('card').classList.add('hide'); v.style.display = 'block';
+    v.src = it.src; v.playbackRate = rate; try { await v.play(); } catch (e) {}
+  } else {
+    v.pause(); v.style.display = 'none'; $('card').classList.remove('hide');
+    $('word').textContent = it.gloss;
+    $('kind').textContent = KIND[it.kind] + (it.kind === 'clip' ? ' (촬영 예정 — 지금은 글자로 표시)' : '');
+  }
+  await sleep(it.dur_ms / rate);
+}
+
+async function playLoop() {
+  if (playing) return; playing = true;
+  while (queue.length) {
+    const p = queue.shift(), my = gen;
+    $('qBadge').style.display = p.question ? 'block' : 'none';
+    $('lowBadge').style.display = p.low_confidence ? 'block' : 'none';
+    for (let i = 0; i < p.playlist.length; i++) {
+      if (my !== gen) break;
+      const it = p.playlist[i]; if (!it.dur_ms) continue;
+      showGloss(p, i); await showItem(it, p.rate || 1); await sleep(TRANSITION_MS);
+    }
+  }
+  playing = false;
+}
+
+function onMessage(m) {
+  if (m.seq) lastSeq = Math.max(lastSeq, m.seq);
+  if (m.type === 'caption.partial') $('partial').textContent = ' ' + m.text;
+  else if (m.type === 'caption.final') setCaption(m.text);
+  else if (m.type === 'sign') {
+    if (m.replay) setCaption(m.text);
+    if (m.flush) { queue = []; gen++; }
+    queue.push(m); playLoop();
+  }
+}
+
+function connect() {
+  const ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host +
+    '/ws/viewer?room=' + encodeURIComponent(room) + '&since=' + lastSeq);
+  ws.onopen = () => { $('conn').textContent = '● 연결됨'; $('conn').className = 'ok'; };
+  ws.onmessage = e => onMessage(JSON.parse(e.data));
+  ws.onclose = () => { $('conn').textContent = '○ 다시 연결 중…'; $('conn').className = 'bad'; setTimeout(connect, 1500); };
+  setInterval(() => ws.readyState === 1 && ws.send(JSON.stringify({ type:'ping', t:Date.now() })), 15000);
+}
+function toggle(btn, el) { const on = btn.getAttribute('aria-pressed') !== 'true'; btn.setAttribute('aria-pressed', on); el.classList.toggle('hide', !on); }
+$('bGloss').onclick = () => toggle($('bGloss'), $('gloss'));
+$('bKo').onclick = () => toggle($('bKo'), $('caption'));
+$('bBig').onclick = () => { fs = Math.min(1.6, fs + .15); document.documentElement.style.setProperty('--fs', fs); };
+$('bSmall').onclick = () => { fs = Math.max(.7, fs - .15); document.documentElement.style.setProperty('--fs', fs); };
+$('bHc').onclick = () => { const on = document.body.classList.toggle('hc'); $('bHc').setAttribute('aria-pressed', on); };
+connect();
+</script>
+</body>
+</html>

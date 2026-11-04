@@ -27,6 +27,8 @@ demo/          Minimal local web demo (no database)
                       pairs + word-lexicon fallback, question/WH detection, leave-one-out --eval
   claude_refine.py    Optional LLM refinement of low-confidence sentences into gloss
   server.py, index.html   Browser mic (Web Speech, ko-KR) → gloss subtitle, http://localhost:8765
+pilot/         Religious-venue pilot (1-way): live Korean captions + gloss captions + sign clips on tablets,
+               no database, with a verification harness (python -m harness.run_harness)
 script_text/   Service version (FastAPI + PostgreSQL)
   app/          sentence/gloss/clip DB, text normalisation, translation, live WebSocket viewer
   db/           SQL migrations (Supabase-compatible) and small sample data

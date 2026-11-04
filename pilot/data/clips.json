@@ -1,0 +1,632 @@
+{
+ "가능": {
+  "file": "clips/가능.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "가다": {
+  "file": "clips/가다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "가르침": {
+  "file": "clips/가르침.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "감사": {
+  "file": "clips/감사.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "강론": {
+  "file": "clips/강론.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "고백": {
+  "file": "clips/고백.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "공부": {
+  "file": "clips/공부.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "공양": {
+  "file": "clips/공양.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "공지": {
+  "file": "clips/공지.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "교회": {
+  "file": "clips/교회.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "긋다": {
+  "file": "clips/긋다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "기도": {
+  "file": "clips/기도.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "끄다": {
+  "file": "clips/끄다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "끝": {
+  "file": "clips/끝.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
+ "나누다": {
+  "file": "clips/나누다.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "나오다": {
+  "file": "clips/나오다.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "내일": {
+  "file": "clips/내일.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "노래": {
+  "file": "clips/노래.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "누구": {
+  "file": "clips/누구.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "다음": {
+  "file": "clips/다음.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "다음주": {
+  "file": "clips/다음주.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "대표": {
+  "file": "clips/대표.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "독서": {
+  "file": "clips/독서.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "독송": {
+  "file": "clips/독송.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "둘째": {
+  "file": "clips/둘째.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "듣다": {
+  "file": "clips/듣다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "말씀": {
+  "file": "clips/말씀.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "맞추다": {
+  "file": "clips/맞추다.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "매주": {
+  "file": "clips/매주.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "먹다": {
+  "file": "clips/먹다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "몇": {
+  "file": "clips/몇.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
+ "모두": {
+  "file": "clips/모두.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "무엇": {
+  "file": "clips/무엇.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "미사": {
+  "file": "clips/미사.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "믿음": {
+  "file": "clips/믿음.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "바라다": {
+  "file": "clips/바라다.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "반갑다": {
+  "file": "clips/반갑다.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "방법": {
+  "file": "clips/방법.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "법당": {
+  "file": "clips/법당.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "법문": {
+  "file": "clips/법문.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "법회": {
+  "file": "clips/법회.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "복음": {
+  "file": "clips/복음.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "봉헌": {
+  "file": "clips/봉헌.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "부처님": {
+  "file": "clips/부처님.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "부처님오신날": {
+  "file": "clips/부처님오신날.mp4",
+  "dur_ms": 890,
+  "signer": "TBD"
+ },
+ "부탁": {
+  "file": "clips/부탁.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "사람": {
+  "file": "clips/사람.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "삼배": {
+  "file": "clips/삼배.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "설교": {
+  "file": "clips/설교.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "성가": {
+  "file": "clips/성가.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "성경": {
+  "file": "clips/성경.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "성당": {
+  "file": "clips/성당.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "성불": {
+  "file": "clips/성불.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "성찬": {
+  "file": "clips/성찬.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "성호": {
+  "file": "clips/성호.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "소리": {
+  "file": "clips/소리.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "소식": {
+  "file": "clips/소식.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "수녀": {
+  "file": "clips/수녀.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "쉬다": {
+  "file": "clips/쉬다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "스님": {
+  "file": "clips/스님.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "시": {
+  "file": "clips/시.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
+ "시간": {
+  "file": "clips/시간.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "시작": {
+  "file": "clips/시작.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "식당": {
+  "file": "clips/식당.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "신도": {
+  "file": "clips/신도.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "신부": {
+  "file": "clips/신부.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "아멘": {
+  "file": "clips/아멘.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "안": {
+  "file": "clips/안.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
+ "앉다": {
+  "file": "clips/앉다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "알리다": {
+  "file": "clips/알리다.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "앞": {
+  "file": "clips/앞.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
+ "어디": {
+  "file": "clips/어디.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "어제": {
+  "file": "clips/어제.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "언제": {
+  "file": "clips/언제.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "없다": {
+  "file": "clips/없다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "여러분": {
+  "file": "clips/여러분.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "연등": {
+  "file": "clips/연등.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "영성체": {
+  "file": "clips/영성체.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "예배": {
+  "file": "clips/예배.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "예식": {
+  "file": "clips/예식.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "오늘": {
+  "file": "clips/오늘.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "오다": {
+  "file": "clips/오다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "오른쪽": {
+  "file": "clips/오른쪽.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "오전": {
+  "file": "clips/오전.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "오후": {
+  "file": "clips/오후.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "왜": {
+  "file": "clips/왜.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
+ "왼쪽": {
+  "file": "clips/왼쪽.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "위하다": {
+  "file": "clips/위하다.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "은혜": {
+  "file": "clips/은혜.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "음력": {
+  "file": "clips/음력.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "이번": {
+  "file": "clips/이번.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "인사": {
+  "file": "clips/인사.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "일어나다": {
+  "file": "clips/일어나다.mp4",
+  "dur_ms": 810,
+  "signer": "TBD"
+ },
+ "일요일": {
+  "file": "clips/일요일.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "읽다": {
+  "file": "clips/읽다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "있다": {
+  "file": "clips/있다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "자비": {
+  "file": "clips/자비.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "잘": {
+  "file": "clips/잘.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
+ "잠시": {
+  "file": "clips/잠시.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "장": {
+  "file": "clips/장.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
+ "전": {
+  "file": "clips/전.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
+ "전하다": {
+  "file": "clips/전하다.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "절": {
+  "file": "clips/절.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
+ "점심": {
+  "file": "clips/점심.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "접수": {
+  "file": "clips/접수.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "제목": {
+  "file": "clips/제목.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "조용": {
+  "file": "clips/조용.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "주님": {
+  "file": "clips/주님.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "지금": {
+  "file": "clips/지금.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "지난주": {
+  "file": "clips/지난주.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "진행": {
+  "file": "clips/진행.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "찬불가": {
+  "file": "clips/찬불가.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "찬송가": {
+  "file": "clips/찬송가.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "참회": {
+  "file": "clips/참회.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "처음": {
+  "file": "clips/처음.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "첫째": {
+  "file": "clips/첫째.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "큰스님": {
+  "file": "clips/큰스님.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "평화": {
+  "file": "clips/평화.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "하나님": {
+  "file": "clips/하나님.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "하느님": {
+  "file": "clips/하느님.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "함께": {
+  "file": "clips/함께.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "합장": {
+  "file": "clips/합장.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "헌금": {
+  "file": "clips/헌금.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "화장실": {
+  "file": "clips/화장실.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "환영": {
+  "file": "clips/환영.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "휴대폰": {
+  "file": "clips/휴대폰.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ }
+}

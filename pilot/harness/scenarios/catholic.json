@@ -1,0 +1,233 @@
+{
+ "domain": "catholic",
+ "utterances": [
+  {
+   "text": "지금부터 미사를 시작하겠습니다.",
+   "gold": "지금 미사 시작",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "미사를 시작하겠습니다.",
+   "gold": "미사 시작",
+   "category": "paraphrase",
+   "split": "dev"
+  },
+  {
+   "text": "성호를 그으며 미사를 시작합니다.",
+   "gold": "성호 긋다 미사 시작",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "모두 일어서 주십시오.",
+   "gold": "모두 일어나다 부탁",
+   "category": "paraphrase",
+   "split": "dev"
+  },
+  {
+   "text": "참회 예식을 하겠습니다.",
+   "gold": "참회 예식",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "제2독서를 봉독하겠습니다.",
+   "gold": "둘째 독서 읽다",
+   "category": "paraphrase",
+   "split": "dev"
+  },
+  {
+   "text": "주님 자비를 베푸소서.",
+   "gold": "주님 자비 부탁",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "서로 평화의 인사를 나눕시다.",
+   "gold": "서로 평화 인사 나누다",
+   "category": "paraphrase",
+   "split": "dev"
+  },
+  {
+   "text": "제1독서를 봉독하겠습니다.",
+   "gold": "첫째 독서 읽다",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "영성체 하실 분들은 앞으로 나와 주십시오.",
+   "gold": "영성체 사람 앞 나오다 부탁",
+   "category": "paraphrase",
+   "split": "dev"
+  },
+  {
+   "text": "화답송을 함께 노래합시다.",
+   "gold": "화답송 함께 노래",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "성당 공지사항입니다.",
+   "gold": "성당 공지",
+   "category": "paraphrase",
+   "split": "holdout"
+  },
+  {
+   "text": "복음 환호송을 부르겠습니다.",
+   "gold": "복음 환호송 노래",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "다음 주 미사는 오전 9시에 있습니다.",
+   "gold": "다음주 미사 오전 9 시 있다",
+   "category": "paraphrase",
+   "split": "holdout"
+  },
+  {
+   "text": "복음 말씀을 듣겠습니다.",
+   "gold": "복음 말씀 듣다",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "고해성사를 원하시는 분은 미사 전에 오십시오.",
+   "gold": "고해성사 원하다 사람 미사 전 오다 부탁",
+   "category": "paraphrase",
+   "split": "holdout"
+  },
+  {
+   "text": "강론이 있겠습니다.",
+   "gold": "강론",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "함께 성가를 부르겠습니다.",
+   "gold": "함께 성가 노래",
+   "category": "paraphrase",
+   "split": "holdout"
+  },
+  {
+   "text": "신앙 고백을 하겠습니다.",
+   "gold": "믿음 고백",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "신부님의 강론이 있겠습니다.",
+   "gold": "신부 강론",
+   "category": "paraphrase",
+   "split": "holdout"
+  },
+  {
+   "text": "보편 지향 기도를 바치겠습니다.",
+   "gold": "모두 위하다 기도",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "하느님께서는 우리를 사랑하십니다.",
+   "gold": "하느님 우리 사랑",
+   "category": "free",
+   "split": "dev"
+  },
+  {
+   "text": "봉헌 성가를 부르겠습니다.",
+   "gold": "봉헌 성가 노래",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "우리 모두 이웃을 용서합시다.",
+   "gold": "우리 모두 이웃 용서",
+   "category": "free",
+   "split": "dev"
+  },
+  {
+   "text": "함께 주님의 기도를 바칩시다.",
+   "gold": "함께 주님 기도",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "기도는 하느님과 대화하는 것입니다.",
+   "gold": "기도 하느님 대화",
+   "category": "free",
+   "split": "dev"
+  },
+  {
+   "text": "평화의 인사를 나누십시오.",
+   "gold": "평화 인사 나누다 부탁",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "가난한 사람들을 잊지 맙시다.",
+   "gold": "가난 사람 잊다 안되다",
+   "category": "free",
+   "split": "holdout"
+  },
+  {
+   "text": "영성체를 하겠습니다.",
+   "gold": "영성체",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "성모님께 도움을 청합시다.",
+   "gold": "성모 도움 부탁",
+   "category": "free",
+   "split": "holdout"
+  },
+  {
+   "text": "영성체를 하실 분은 앞으로 나오십시오.",
+   "gold": "영성체 사람 앞 나오다 부탁",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "주님의 평화가 여러분과 함께.",
+   "gold": "주님 평화 여러분 함께",
+   "category": "free",
+   "split": "holdout"
+  },
+  {
+   "text": "신부님께서 강복을 주시겠습니다.",
+   "gold": "신부 강복",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "미사가 끝났습니다. 가서 복음을 전합시다.",
+   "gold": "미사 끝 가다 복음 전하다",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "성당 공지 사항을 알려 드리겠습니다.",
+   "gold": "성당 공지 알리다",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "다음 주일 교중 미사는 오전 10시에 있습니다.",
+   "gold": "다음 일요일 미사 오전 10 시 있다",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "고해성사는 미사 전에 할 수 있습니다.",
+   "gold": "고해성사 미사 전 가능",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "아멘.",
+   "gold": "아멘",
+   "category": "fixed",
+   "split": "fixed"
+  }
+ ]
+}

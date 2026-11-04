@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SyncSL 운영 콘솔</title>
+<style>
+  body { margin:0; font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif; background:#f5f6f8; color:#1d2129; }
+  .wrap { display:grid; grid-template-columns:1.3fr 1fr; gap:16px; padding:16px; max-width:1280px; margin:auto; }
+  section { background:#fff; border-radius:14px; padding:16px; box-shadow:0 1px 3px #0001; }
+  h2 { font-size:15px; margin:0 0 10px; color:#555; }
+  select,input,textarea,button { font:inherit; }
+  .row { display:flex; gap:8px; align-items:center; margin-bottom:10px; flex-wrap:wrap; }
+  button { border:0; border-radius:10px; padding:10px 14px; background:#e8ebf0; cursor:pointer; }
+  button.primary { background:#1f6feb; color:#fff; } button.rec { background:#d73a49; color:#fff; }
+  #sugg button { display:block; width:100%; text-align:left; margin-bottom:6px; background:#f0f4ff; }
+  #sugg small { color:#667; display:block; }
+  #log { max-height:52vh; overflow:auto; font-size:14px; }
+  .pk { border-bottom:1px solid #eee; padding:8px 0; }
+  .pk .g { font-weight:700; } .pk .m { color:#888; font-size:12px; }
+  .pk.low { background:#fff4ef; }
+  #partial { color:#888; min-height:1.4em; }
+  textarea { width:100%; min-height:60px; box-sizing:border-box; }
+  .qr { text-align:center; } .qr img { width:180px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <section>
+      <h2>1. 상황 · 자유 옵션</h2>
+      <div class="row">
+        <label>상황 <select id="domain"></select></label>
+        <label>방 <input id="room" value="main" size="8"></label>
+      </div>
+      <label>자유 옵션 입력 (한 줄에 하나: <code>표기</code> 또는 <code>표기=gloss</code>. gloss가 없으면 지문자로 표시)</label>
+      <textarea id="terms" placeholder="요한복음&#10;김은혜 목사=목사 FS:김은혜&#10;성탄 감사 예배=성탄 감사 예배"></textarea>
+      <div class="row"><button id="saveTerms">적용</button><span id="sess"></span></div>
+    </section>
+    <section style="margin-top:16px">
+      <h2>2. 음성 · 직접 입력</h2>
+      <div class="row">
+        <button id="mic" class="primary">🎙 음성 인식 시작</button>
+        <span id="micState">Chrome의 Web Speech(ko-KR) 사용 · 현장 음향 콘솔 출력을 노트북 마이크 입력으로</span>
+      </div>
+      <div id="partial"></div>
+      <div class="row"><input id="manual" style="flex:1" placeholder="문장을 직접 입력하고 Enter"><button id="send">보내기</button></div>
+    </section>
+    <section style="margin-top:16px">
+      <h2>방송 기록 (주황 = 신뢰도 낮음 → 확인 필요)</h2>
+      <div id="log"></div>
+    </section>
+  </div>
+  <div>
+    <section class="qr">
+      <h2>태블릿 접속 QR</h2>
+      <img id="qr" alt="Viewer 접속 QR 코드"><div id="url" style="font-size:13px;word-break:break-all"></div>
+      <div id="viewers" style="margin-top:6px;color:#555"></div>
+    </section>
+    <section style="margin-top:16px">
+      <h2>3. 상위 문장 10개 (순서상 다음 문장 · 검수된 gloss로 바로 송출)</h2>
+      <div id="sugg"></div>
+    </section>
+  </div>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const room = () => $('room').value.trim() || 'main';
+const api = (p, o) => fetch(p, o).then(r => r.json());
+const post = (p, b) => api(p, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(b || {}) });
+
+async function loadSession() {
+  const s = await api(`/api/rooms/${room()}/session`);
+  $('domain').value = s.domain;
+  $('terms').value = Object.entries(s.terms).map(([k,v]) => v ? `${k}=${v}` : k).join('\n');
+  $('viewers').textContent = `접속한 태블릿 ${s.viewers}대`;
+  $('qr').src = `/qr.svg?room=${room()}&t=${Date.now()}`;
+  $('url').textContent = (await api(`/api/viewer-url?room=${room()}`)).url;
+  loadSugg();
+}
+async function loadSugg() {
+  const rows = await api(`/api/rooms/${room()}/suggest`);
+  $('sugg').innerHTML = '';
+  for (const r of rows) {
+    const b = document.createElement('button');
+    b.innerHTML = `${r.order}. ${r.text}<small>${r.gloss}</small>`;
+    b.onclick = async () => { log(await post(`/api/rooms/${room()}/phrase/${r.order}`)); loadSugg(); };
+    $('sugg').appendChild(b);
+  }
+}
+function log(p) {
+  if (!p) return;
+  for (const x of (Array.isArray(p) ? p : [p])) {
+    const d = document.createElement('div'); d.className = 'pk' + (x.low_confidence ? ' low' : '');
+    d.innerHTML = `<div>${x.text}</div><div class="g">${x.glosses.join(' ')}</div>` +
+      `<div class="m">${x.mode} · 신뢰도 ${x.confidence} · 수어 ${(x.total_ms/1000).toFixed(1)}초` +
+      `${x.rate > 1 ? ' · 1.25배속' : ''}${x.flush ? ' · 밀린 수어 건너뜀' : ''}${x.unknown.length ? ' · 미등록: ' + x.unknown.join(', ') : ''}</div>`;
+    $('log').prepend(d);
+  }
+}
+(async () => {
+  const doms = await api('/api/domains');
+  for (const [k, v] of Object.entries(doms)) $('domain').add(new Option(v, k));
+  loadSession();
+})();
+$('domain').onchange = async () => { await post(`/api/rooms/${room()}/session`, { domain:$('domain').value }); loadSugg(); };
+$('room').onchange = loadSession;
+$('saveTerms').onclick = async () => {
+  const terms = {};
+  for (const line of $('terms').value.split('\n')) { const [k, v] = line.split('='); if (k && k.trim()) terms[k.trim()] = (v || '').trim(); }
+  await post(`/api/rooms/${room()}/session`, { terms }); $('sess').textContent = '적용됨';
+};
+async function sendText(text, final = true) { const r = await post(`/api/rooms/${room()}/text`, { text, final }); if (final) log(r); }
+$('send').onclick = () => { const t = $('manual').value.trim(); if (t) { sendText(t); $('manual').value = ''; } };
+$('manual').onkeydown = e => { if (e.key === 'Enter') $('send').click(); };
+setInterval(async () => { const s = await api(`/api/rooms/${room()}/session`); $('viewers').textContent = `접속한 태블릿 ${s.viewers}대`; }, 5000);
+
+// Web Speech: partial은 바로 자막으로, final은 번역까지
+const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, on = false;
+$('mic').onclick = () => {
+  if (!Rec) { $('micState').textContent = '이 브라우저는 음성 인식을 지원하지 않습니다 (Chrome 사용)'; return; }
+  if (on) { on = false; rec.stop(); $('mic').textContent = '🎙 음성 인식 시작'; $('mic').className = 'primary'; return; }
+  rec = new Rec(); rec.lang = 'ko-KR'; rec.continuous = true; rec.interimResults = true;
+  rec.onresult = e => {
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript.trim(); if (!t) continue;
+      if (e.results[i].isFinal) { $('partial').textContent = ''; sendText(t, true); }
+      else { $('partial').textContent = t; sendText(t, false); }
+    }
+  };
+  rec.onend = () => { if (on) rec.start(); };   // 브라우저가 끊어도 계속
+  on = true; rec.start(); $('mic').textContent = '■ 음성 인식 중지'; $('mic').className = 'rec';
+};
+</script>
+</body>
+</html>
