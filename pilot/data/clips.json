@@ -9,6 +9,11 @@
   "dur_ms": 730,
   "signer": "TBD"
  },
+ "가장": {
+  "file": "clips/가장.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
  "가족": {
   "file": "clips/가족.mp4",
   "dur_ms": 730,
@@ -64,6 +69,26 @@
   "dur_ms": 730,
   "signer": "TBD"
  },
+ "그들": {
+  "file": "clips/그들.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "그래서": {
+  "file": "clips/그래서.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "그런데": {
+  "file": "clips/그런데.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "그리스도": {
+  "file": "clips/그리스도.mp4",
+  "dur_ms": 810,
+  "signer": "TBD"
+ },
  "긋다": {
   "file": "clips/긋다.mp4",
   "dur_ms": 730,
@@ -94,6 +119,11 @@
   "dur_ms": 730,
   "signer": "TBD"
  },
+ "길": {
+  "file": "clips/길.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
  "끄다": {
   "file": "clips/끄다.mp4",
   "dur_ms": 730,
@@ -101,6 +131,11 @@
  },
  "끝": {
   "file": "clips/끝.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
+ "나": {
+  "file": "clips/나.mp4",
   "dur_ms": 690,
   "signer": "TBD"
  },
@@ -117,6 +152,11 @@
  "내일": {
   "file": "clips/내일.mp4",
   "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "너": {
+  "file": "clips/너.mp4",
+  "dur_ms": 690,
   "signer": "TBD"
  },
  "노래": {
@@ -149,6 +189,11 @@
   "dur_ms": 730,
   "signer": "TBD"
  },
+ "더": {
+  "file": "clips/더.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
  "독송": {
   "file": "clips/독송.mp4",
   "dur_ms": 730,
@@ -156,6 +201,11 @@
  },
  "돕다": {
   "file": "clips/돕다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "되다": {
+  "file": "clips/되다.mp4",
   "dur_ms": 730,
   "signer": "TBD"
  },
@@ -169,14 +219,29 @@
   "dur_ms": 770,
   "signer": "TBD"
  },
+ "때": {
+  "file": "clips/때.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
  "마음": {
   "file": "clips/마음.mp4",
   "dur_ms": 730,
   "signer": "TBD"
  },
+ "말": {
+  "file": "clips/말.mp4",
+  "dur_ms": 690,
+  "signer": "TBD"
+ },
  "말씀": {
   "file": "clips/말씀.mp4",
   "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "말하다": {
+  "file": "clips/말하다.mp4",
+  "dur_ms": 770,
   "signer": "TBD"
  },
  "맞추다": {
@@ -279,6 +344,11 @@
   "dur_ms": 770,
   "signer": "TBD"
  },
+ "보다": {
+  "file": "clips/보다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
  "복음": {
   "file": "clips/복음.mp4",
   "dur_ms": 730,
@@ -302,6 +372,11 @@
  "부활": {
   "file": "clips/부활.mp4",
   "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "불가능": {
+  "file": "clips/불가능.mp4",
+  "dur_ms": 770,
   "signer": "TBD"
  },
  "사람": {
@@ -474,6 +549,11 @@
   "dur_ms": 730,
   "signer": "TBD"
  },
+ "알다": {
+  "file": "clips/알다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
  "알리다": {
   "file": "clips/알리다.mp4",
   "dur_ms": 770,
@@ -589,6 +669,11 @@
   "dur_ms": 730,
   "signer": "TBD"
  },
+ "원하다": {
+  "file": "clips/원하다.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
  "위하다": {
   "file": "clips/위하다.mp4",
   "dur_ms": 770,
@@ -619,8 +704,18 @@
   "dur_ms": 730,
   "signer": "TBD"
  },
+ "이유": {
+  "file": "clips/이유.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
  "인사": {
   "file": "clips/인사.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "인생": {
+  "file": "clips/인생.mp4",
   "dur_ms": 730,
   "signer": "TBD"
  },
@@ -634,6 +729,11 @@
   "dur_ms": 770,
   "signer": "TBD"
  },
+ "일주일": {
+  "file": "clips/일주일.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
  "읽다": {
   "file": "clips/읽다.mp4",
   "dur_ms": 730,
@@ -641,6 +741,16 @@
  },
  "있다": {
   "file": "clips/있다.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "자기": {
+  "file": "clips/자기.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "자리": {
+  "file": "clips/자리.mp4",
   "dur_ms": 730,
   "signer": "TBD"
  },
@@ -726,6 +836,11 @@
  },
  "주님": {
   "file": "clips/주님.mp4",
+  "dur_ms": 730,
+  "signer": "TBD"
+ },
+ "주다": {
+  "file": "clips/주다.mp4",
   "dur_ms": 730,
   "signer": "TBD"
  },
@@ -816,6 +931,11 @@
  },
  "하나님": {
   "file": "clips/하나님.mp4",
+  "dur_ms": 770,
+  "signer": "TBD"
+ },
+ "하지만": {
+  "file": "clips/하지만.mp4",
   "dur_ms": 770,
   "signer": "TBD"
  },
