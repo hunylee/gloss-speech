@@ -77,6 +77,9 @@ def _template_supported(template: list[str], rules: list[str]) -> bool:
     if any(g not in template for g in known):
         return False
     extra = [g for g in template if g not in known]
+    # 템플릿 속 지문자(성경 책 이름 등)는 이번 주 입력에도 똑같이 있어야 한다 (요한복음 ≠ 마태복음)
+    if any(g.startswith("FS:") and g not in rules for g in extra):
+        return False
     return len(extra) <= garbled
 
 
@@ -263,6 +266,12 @@ class Translator:
                 right = self._segment(word[k:], domain, ctx, depth + 1)
             if right is not None and (left or right):
                 return left + right
+        if depth == 0:
+            # 오른쪽이 사전에 없는 말이면(성경 책 이름·인명 등) 버리지 말고 지문자로 남긴다
+            for k in range(len(word) - 2, 1, -1):
+                left = self._match_word(word[:k], domain, ctx)
+                if left:
+                    return left + [f"FS:{self._strip_josa(word[k:])}"]
         return None
 
     def _fuzzy(self, word: str, domain: str, ctx: set[str]) -> list[str] | None:
@@ -282,7 +291,7 @@ class Translator:
                 if len(surface) < 2 or len(surface) != len(c) or (not entries[0].gloss and len(c) < 4):
                     continue
                 d = _edit(jc, _jamo(surface), 2)
-                limit = 1 if len(surface) == 2 else 2
+                limit = 1 if (len(surface) == 2 or not entries[0].gloss) else 2   # 버리는 말로는 1개 차이만
                 if d <= limit and (best is None or d < best[0]):
                     ok = [e for e in entries if e.domain in ("*", domain) and all(g in ctx for g in e.gloss)]
                     rest = word[len(c):]

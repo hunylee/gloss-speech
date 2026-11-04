@@ -217,6 +217,8 @@ async def run_scenario(port, vclock, scenario, profile, n_viewers, reconnect, se
 async def main_async(quick: bool):
     corpus = Corpus.load()
     scenarios = [json.loads(p.read_text(encoding="utf-8")) for p in sorted((ROOT / "scenarios").glob("*.json"))]
+    scenarios = [s for s in scenarios if s["domain"] in corpus.domains]      # 비활성 상황은 검증에서도 뺀다
+    scenarios.sort(key=lambda s: s["domain"] != "protestant")
     profiles = ["realistic"] if quick else ["clean", "realistic", "noisy"]
     runs = []
 
@@ -243,9 +245,9 @@ async def main_async(quick: bool):
     app2 = create_app(corpus, agent=agent, clock=lambda: vclock2["t"])
     allowed = app2.state.pipe.translator.allowed_vocab(app2.state.pipe.session("x"))
     with ServerThread(app2) as srv:
-        sc = next(s for s in scenarios if s["domain"] == "catholic")
+        sc = scenarios[0]
         recs, deliv = await run_scenario(srv.port, vclock2, sc, "noisy", 3, reconnect=False, seed=5)
-        runs.append({"name": "catholic/agent-fault", "kind": "agent", "profile": "noisy", "domain": "catholic",
+        runs.append({"name": f"{sc['domain']}/agent-fault", "kind": "agent", "profile": "noisy", "domain": sc["domain"],
                      "records": recs, "delivery": deliv})
     leaked = sorted({g for r in recs for g in r["broadcast_glosses"]
                      if g not in allowed and not g.startswith("FS:") and not g.isdigit()})

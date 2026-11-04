@@ -1,5 +1,5 @@
-code,name_ko,group
-protestant,기독교 예배,religion
-catholic,천주교 미사,religion
-buddhist,불교 법회,religion
-common,공통 안내,common
+code,name_ko,group,active
+protestant,기독교 예배,religion,1
+catholic,천주교 미사,religion,0
+buddhist,불교 법회,religion,0
+common,공통 안내,common,1

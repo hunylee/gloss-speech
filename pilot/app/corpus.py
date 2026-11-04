@@ -66,15 +66,17 @@ class Corpus:
 
     @classmethod
     def load(cls, root: Path = DATA) -> "Corpus":
+        # active=0인 상황(지금은 천주교·불교)은 데이터는 남겨 두고 콘솔·검색·번역에서 뺀다
         with open(root / "domains.csv", encoding="utf-8") as f:
-            domains = {r["code"]: r["name_ko"] for r in csv.DictReader(f)}
+            domains = {r["code"]: r["name_ko"] for r in csv.DictReader(f)
+                       if r.get("active", "1").strip() != "0"}
         with open(root / "phrasebank.csv", encoding="utf-8") as f:
             phrases = [Phrase(r["domain"], int(r["order"]), r["text"], r["gloss"].split())
-                       for r in csv.DictReader(f)]
+                       for r in csv.DictReader(f) if r["domain"] in domains]
         with open(root / "lexicon.csv", encoding="utf-8") as f:
             rows = [l for l in f if l.strip() and not l.startswith("#")]
         lexicon = [LexEntry(r["surface"], r["gloss"].split(), r["domain"], r["kind"])
-                   for r in csv.DictReader(rows)]
+                   for r in csv.DictReader(rows) if r["domain"] in ("*", *domains)]
         clips_path = root / "clips.json"
         clips = json.loads(clips_path.read_text(encoding="utf-8")) if clips_path.exists() else {}
         return cls(domains, phrases, lexicon, clips)

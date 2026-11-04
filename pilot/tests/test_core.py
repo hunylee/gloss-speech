@@ -23,14 +23,23 @@ def test_fixed_sentence_uses_verified_template():
 
 def test_template_never_adds_unspoken_meaning():
     # '둘째'를 말했는데 '첫째' 템플릿이 쓰이면 안 된다
-    assert tr("제2독서를 봉독하겠습니다.", "catholic").glosses[0] == "둘째"
     # '지금부터'를 말하지 않았으면 '지금'이 들어가면 안 된다
-    assert "지금" not in tr("법회를 시작하겠습니다.", "buddhist").glosses
+    assert "지금" not in tr("예배를 시작하겠습니다.").glosses
+    # 찬송가 장 번호는 말한 번호로
+    assert "364" in tr("찬송가 364장을 함께 부르겠습니다.").glosses
 
 
-def test_domain_changes_meaning():
-    assert "가르침" in tr("말씀을 듣겠습니다.", "buddhist").glosses
-    assert "말씀" in tr("말씀을 듣겠습니다.", "protestant").glosses
+def test_inactive_domains_are_hidden():
+    assert set(C.domains) == {"protestant", "common"}
+    assert all(p.domain in C.domains for p in C.phrases)
+
+
+def test_bible_reference_keeps_spoken_book_and_numbers():
+    r = tr("성경 봉독은 마태복음 5장 3절 말씀입니다.")
+    assert "FS:마태복음" in r.glosses and "FS:요한복음" not in r.glosses
+    assert ["5", "장", "3", "절"] == r.glosses[r.glosses.index("5"):r.glosses.index("절") + 1]
+    r = tr("성경 봉독은 요한복음 1장 1절 말씀입니다.")
+    assert r.mode == "template" and r.glosses[3:7] == ["1", "장", "1", "절"]
 
 
 def test_free_option_terms_become_fingerspelling():

@@ -32,6 +32,8 @@ def render(r: dict) -> str:
     dom_names = {"protestant": "기독교", "catholic": "천주교", "buddhist": "불교"}
     drows = ""
     for d, dn in dom_names.items():
+        if not r["by_domain"].get(f"{d}|fixed", {}).get("n"):
+            continue                                    # 비활성 상황은 표에서 뺀다
         drows += "<tr><td>" + dn + "</td>" + "".join(
             f'<td class="n">{_f(r["by_domain"][f"{d}|{c}"]["order_f1"])} {_bar(r["by_domain"][f"{d}|{c}"]["order_f1"])}</td>'
             for c in ("fixed", "paraphrase", "free")) + "</tr>"

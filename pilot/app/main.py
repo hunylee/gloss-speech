@@ -67,6 +67,9 @@ def create_app(corpus: Corpus | None = None, agent=None, clock=time.monotonic,
     def set_session(room: str, body: SessionIn):
         s = pipe.session(room)
         if body.domain:
+            if body.domain not in corpus.domains:
+                from fastapi import HTTPException
+                raise HTTPException(400, f"비활성 또는 없는 상황입니다: {body.domain}")
             s.domain, s.order = body.domain, 0
         if body.terms is not None:
             s.terms = {k.strip(): v.strip() for k, v in body.terms.items() if k.strip()}

@@ -27,6 +27,12 @@ P = {
    ("새로 오신 분들 환영합니다.", "새롭다 오다 사람 환영"),
    ("예배 마치고 점심 드시고 가세요.", "예배 끝 점심 먹다 가다 부탁"),
    ("교회 소식 전해 드리겠습니다.", "교회 소식 전하다"),
+   # 2026-11-04 기독교 집중 보강 때 위 문장들은 보정에 써서 dev로 돌리고, 아래를 사전 보강 '전에' 새 holdout으로 작성
+   ("다 같이 일어나서 찬송하겠습니다.", "모두 함께 일어나다 찬송가", "holdout"),
+   ("이제 대표 기도 순서입니다.", "대표 기도 순서", "holdout"),
+   ("헌금은 입구 헌금함에 넣어 주세요.", "헌금 입구 헌금함 넣다 부탁", "holdout"),
+   ("오후 2시에 성경 공부 모임이 있습니다.", "오후 2 시 성경 공부 모임 있다", "holdout"),
+   ("교독문은 주보 뒷면에 있습니다.", "교독문 주보 뒤 있다", "holdout"),
   ],
   "free": [
    ("우리는 서로 사랑해야 합니다.", "우리 서로 사랑 필요"),
@@ -35,6 +41,12 @@ P = {
    ("오늘 말씀을 마음에 새기시기 바랍니다.", "오늘 말씀 마음 기억 바라다"),
    ("여러분 이번 한 주도 평안하십시오.", "여러분 이번 주 평안 바라다"),
    ("예수님께서 제자들에게 말씀하셨습니다.", "예수 제자 말하다"),
+   ("예수님은 우리의 죄를 용서하셨습니다.", "예수 우리 죄 용서", "holdout"),
+   ("믿음으로 어려움을 이겨 냅시다.", "믿음 어렵다 이기다", "holdout"),
+   ("하나님의 사랑은 변하지 않습니다.", "하나님 사랑 변하다 아니다", "holdout"),
+   ("가족과 이웃을 위해 기도합시다.", "가족 이웃 위하다 기도", "holdout"),
+   ("감사하는 마음으로 한 주를 시작합시다.", "감사 마음 일주일 시작", "holdout"),
+   ("성경을 매일 읽는 습관을 가집시다.", "성경 매일 읽다 습관 가지다", "holdout"),
   ]},
  "catholic": {
   "paraphrase": [
@@ -88,9 +100,12 @@ for dom, cats in P.items():
             for r in bank if r["domain"] == dom]
     for cat in ("paraphrase", "free"):
         rows = cats[cat]
+        explicit = any(len(r) == 3 for r in rows)      # split을 직접 적은 상황은 나머지를 모두 dev로
         half = len(rows) // 2
-        for i, (t, g) in enumerate(rows):
-            utts.append({"text": t, "gold": g, "category": cat, "split": "dev" if i < half else "holdout"})
+        for i, r in enumerate(rows):
+            t, g = r[0], r[1]
+            split = r[2] if len(r) == 3 else ("dev" if explicit or i < half else "holdout")
+            utts.append({"text": t, "gold": g, "category": cat, "split": split})
     # 실제 진행처럼 섞는다: 정형 문장 사이사이에 변형·자유 발화
     fixed = [u for u in utts if u["category"] == "fixed"]
     other = [u for u in utts if u["category"] != "fixed"]

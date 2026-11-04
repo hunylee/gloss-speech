@@ -38,8 +38,8 @@
    "split": "dev"
   },
   {
-   "text": "자리에 앉아 주십시오.",
-   "gold": "앉다 부탁",
+   "text": "찬송가 300장을 함께 부르겠습니다.",
+   "gold": "찬송가 300 장 함께 노래",
    "category": "fixed",
    "split": "fixed"
   },
@@ -50,8 +50,8 @@
    "split": "dev"
   },
   {
-   "text": "찬송가 300장을 함께 부르겠습니다.",
-   "gold": "찬송가 300 장 함께 노래",
+   "text": "사도신경으로 신앙을 고백하겠습니다.",
+   "gold": "사도신경 믿음 고백",
    "category": "fixed",
    "split": "fixed"
   },
@@ -62,8 +62,8 @@
    "split": "dev"
   },
   {
-   "text": "사도신경으로 신앙을 고백하겠습니다.",
-   "gold": "사도신경 믿음 고백",
+   "text": "자리에 앉아 주십시오.",
+   "gold": "앉다 부탁",
    "category": "fixed",
    "split": "fixed"
   },
@@ -71,7 +71,19 @@
    "text": "헌금하실 분은 앞으로 나와 주세요.",
    "gold": "헌금 사람 앞 나오다 부탁",
    "category": "paraphrase",
-   "split": "holdout"
+   "split": "dev"
+  },
+  {
+   "text": "교독문 10번을 함께 읽겠습니다.",
+   "gold": "교독문 10 번 함께 읽다",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "다음 주 예배는 오전 10시입니다.",
+   "gold": "다음주 예배 오전 10 시",
+   "category": "paraphrase",
+   "split": "dev"
   },
   {
    "text": "대표 기도가 있겠습니다.",
@@ -80,10 +92,22 @@
    "split": "fixed"
   },
   {
-   "text": "다음 주 예배는 오전 10시입니다.",
-   "gold": "다음주 예배 오전 10 시",
+   "text": "새로 오신 분들 환영합니다.",
+   "gold": "새롭다 오다 사람 환영",
    "category": "paraphrase",
-   "split": "holdout"
+   "split": "dev"
+  },
+  {
+   "text": "성경 봉독은 요한복음 3장 16절 말씀입니다.",
+   "gold": "성경 읽다 FS:요한복음 3 장 16 절 말씀",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "예배 마치고 점심 드시고 가세요.",
+   "gold": "예배 끝 점심 먹다 가다 부탁",
+   "category": "paraphrase",
+   "split": "dev"
   },
   {
    "text": "성경 말씀을 봉독하겠습니다.",
@@ -92,8 +116,20 @@
    "split": "fixed"
   },
   {
-   "text": "새로 오신 분들 환영합니다.",
-   "gold": "새롭다 오다 사람 환영",
+   "text": "교회 소식 전해 드리겠습니다.",
+   "gold": "교회 소식 전하다",
+   "category": "paraphrase",
+   "split": "dev"
+  },
+  {
+   "text": "찬양대의 찬양이 있겠습니다.",
+   "gold": "찬양대 찬양",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "다 같이 일어나서 찬송하겠습니다.",
+   "gold": "모두 함께 일어나다 찬송가",
    "category": "paraphrase",
    "split": "holdout"
   },
@@ -104,8 +140,8 @@
    "split": "fixed"
   },
   {
-   "text": "예배 마치고 점심 드시고 가세요.",
-   "gold": "예배 끝 점심 먹다 가다 부탁",
+   "text": "이제 대표 기도 순서입니다.",
+   "gold": "대표 기도 순서",
    "category": "paraphrase",
    "split": "holdout"
   },
@@ -116,8 +152,8 @@
    "split": "fixed"
   },
   {
-   "text": "교회 소식 전해 드리겠습니다.",
-   "gold": "교회 소식 전하다",
+   "text": "헌금은 입구 헌금함에 넣어 주세요.",
+   "gold": "헌금 입구 헌금함 넣다 부탁",
    "category": "paraphrase",
    "split": "holdout"
   },
@@ -128,10 +164,10 @@
    "split": "fixed"
   },
   {
-   "text": "우리는 서로 사랑해야 합니다.",
-   "gold": "우리 서로 사랑 필요",
-   "category": "free",
-   "split": "dev"
+   "text": "오후 2시에 성경 공부 모임이 있습니다.",
+   "gold": "오후 2 시 성경 공부 모임 있다",
+   "category": "paraphrase",
+   "split": "holdout"
   },
   {
    "text": "헌금 기도를 드리겠습니다.",
@@ -140,10 +176,10 @@
    "split": "fixed"
   },
   {
-   "text": "하나님은 우리를 언제나 기다리고 계십니다.",
-   "gold": "하나님 우리 항상 기다리다",
-   "category": "free",
-   "split": "dev"
+   "text": "교독문은 주보 뒷면에 있습니다.",
+   "gold": "교독문 주보 뒤 있다",
+   "category": "paraphrase",
+   "split": "holdout"
   },
   {
    "text": "성찬식을 진행하겠습니다.",
@@ -152,8 +188,8 @@
    "split": "fixed"
   },
   {
-   "text": "어려운 이웃을 돕는 것이 믿음입니다.",
-   "gold": "어렵다 이웃 돕다 믿음",
+   "text": "우리는 서로 사랑해야 합니다.",
+   "gold": "우리 서로 사랑 필요",
    "category": "free",
    "split": "dev"
   },
@@ -164,10 +200,10 @@
    "split": "fixed"
   },
   {
-   "text": "오늘 말씀을 마음에 새기시기 바랍니다.",
-   "gold": "오늘 말씀 마음 기억 바라다",
+   "text": "하나님은 우리를 언제나 기다리고 계십니다.",
+   "gold": "하나님 우리 항상 기다리다",
    "category": "free",
-   "split": "holdout"
+   "split": "dev"
   },
   {
    "text": "처음 오신 분들을 환영합니다.",
@@ -176,10 +212,10 @@
    "split": "fixed"
   },
   {
-   "text": "여러분 이번 한 주도 평안하십시오.",
-   "gold": "여러분 이번 주 평안 바라다",
+   "text": "어려운 이웃을 돕는 것이 믿음입니다.",
+   "gold": "어렵다 이웃 돕다 믿음",
    "category": "free",
-   "split": "holdout"
+   "split": "dev"
   },
   {
    "text": "다음 주 예배는 오전 11시에 시작합니다.",
@@ -188,10 +224,10 @@
    "split": "fixed"
   },
   {
-   "text": "예수님께서 제자들에게 말씀하셨습니다.",
-   "gold": "예수 제자 말하다",
+   "text": "오늘 말씀을 마음에 새기시기 바랍니다.",
+   "gold": "오늘 말씀 마음 기억 바라다",
    "category": "free",
-   "split": "holdout"
+   "split": "dev"
   },
   {
    "text": "주일 오후에 성경 공부가 있습니다.",
@@ -200,10 +236,22 @@
    "split": "fixed"
   },
   {
+   "text": "여러분 이번 한 주도 평안하십시오.",
+   "gold": "여러분 이번 주 평안 바라다",
+   "category": "free",
+   "split": "dev"
+  },
+  {
    "text": "예배 후 식당에서 점심 식사를 합니다.",
    "gold": "예배 끝 식당 점심 먹다",
    "category": "fixed",
    "split": "fixed"
+  },
+  {
+   "text": "예수님께서 제자들에게 말씀하셨습니다.",
+   "gold": "예수 제자 말하다",
+   "category": "free",
+   "split": "dev"
   },
   {
    "text": "기도 제목이 있는 분은 알려 주세요.",
@@ -212,16 +260,22 @@
    "split": "fixed"
   },
   {
-   "text": "하나님께 감사드립니다.",
-   "gold": "하나님 감사",
+   "text": "예수님은 우리의 죄를 용서하셨습니다.",
+   "gold": "예수 우리 죄 용서",
+   "category": "free",
+   "split": "holdout"
+  },
+  {
+   "text": "주기도문으로 예배를 마치겠습니다.",
+   "gold": "주기도문 예배 끝",
    "category": "fixed",
    "split": "fixed"
   },
   {
-   "text": "주님의 은혜가 함께 하시기를 바랍니다.",
-   "gold": "주님 은혜 함께 바라다",
-   "category": "fixed",
-   "split": "fixed"
+   "text": "믿음으로 어려움을 이겨 냅시다.",
+   "gold": "믿음 어렵다 이기다",
+   "category": "free",
+   "split": "holdout"
   },
   {
    "text": "축도로 예배를 마치겠습니다.",
@@ -230,10 +284,46 @@
    "split": "fixed"
   },
   {
+   "text": "하나님의 사랑은 변하지 않습니다.",
+   "gold": "하나님 사랑 변하다 아니다",
+   "category": "free",
+   "split": "holdout"
+  },
+  {
+   "text": "하나님께 감사드립니다.",
+   "gold": "하나님 감사",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "가족과 이웃을 위해 기도합시다.",
+   "gold": "가족 이웃 위하다 기도",
+   "category": "free",
+   "split": "holdout"
+  },
+  {
+   "text": "주님의 은혜가 함께 하시기를 바랍니다.",
+   "gold": "주님 은혜 함께 바라다",
+   "category": "fixed",
+   "split": "fixed"
+  },
+  {
+   "text": "감사하는 마음으로 한 주를 시작합시다.",
+   "gold": "감사 마음 일주일 시작",
+   "category": "free",
+   "split": "holdout"
+  },
+  {
    "text": "아멘.",
    "gold": "아멘",
    "category": "fixed",
    "split": "fixed"
+  },
+  {
+   "text": "성경을 매일 읽는 습관을 가집시다.",
+   "gold": "성경 매일 읽다 습관 가지다",
+   "category": "free",
+   "split": "holdout"
   }
  ]
 }
