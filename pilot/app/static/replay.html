@@ -95,6 +95,16 @@ async function feed(t) {
 }
 function seekTo(t) { next = segs.findIndex(s => s.t >= t); if (next < 0) next = segs.length; buf = ''; }
 
+// YouTube 탭에서 이 화면을 열고 자막을 넘겨주는 경우 (브라우저가 사이트 간 데이터를 지우므로 메시지로 받는다)
+window.addEventListener('message', async e => {
+  if (e.origin !== 'https://www.youtube.com' || !e.data || e.data.syncsl !== VIDEO) return;
+  segs = e.data.segs; next = 0;
+  try { localStorage.setItem(KEY, JSON.stringify(segs)); } catch (err) {}
+  try { await post(`/api/transcripts/${VIDEO}`, segs); } catch (err) {}
+  $('msg').textContent = '';
+  e.source.postMessage({syncslAck: segs.length}, e.origin);
+});
+
 // YouTube IFrame API
 let player, lastT = 0, busy = false;
 const tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(tag);
