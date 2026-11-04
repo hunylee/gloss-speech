@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SyncSL 영상 연동 시험</title>
+<style>
+  body { margin:0; font-family:-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif; background:#111418; color:#eef; }
+  .wrap { display:grid; grid-template-columns: 1.4fr 1fr; gap:12px; padding:12px; height:100vh; box-sizing:border-box; }
+  .left { display:flex; flex-direction:column; gap:10px; min-height:0; }
+  #player { width:100%; aspect-ratio:16/9; background:#000; border-radius:10px; }
+  iframe.viewer { width:100%; height:100%; border:0; border-radius:12px; background:#0f1115; }
+  .panel { background:#1b1f27; border-radius:10px; padding:10px 12px; font-size:14px; }
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .stats div { background:#232833; border-radius:8px; padding:8px; } .stats b { display:block; font-size:20px; }
+  #log { overflow:auto; flex:1; font-size:13px; line-height:1.5; }
+  #log .r { border-bottom:1px solid #2a303c; padding:4px 0; } #log .g { color:#ffcf4a; } #log .low { color:#ff8a65; }
+  #log .t { color:#8a93a3; margin-right:6px; }
+  button, select { font:inherit; border:0; border-radius:8px; padding:8px 12px; background:#2c3442; color:#eef; }
+  .warn { color:#ffb74d; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="left">
+    <div id="player"></div>
+    <div class="panel">
+      <div class="stats">
+        <div>보낸 문장<b id="sN">0</b></div><div>평균 신뢰도<b id="sC">–</b></div>
+        <div>부분 번역<b id="sL">–</b></div><div>지금 구간<b id="sec" style="font-size:16px">–</b></div>
+      </div>
+      <div style="margin-top:8px">STT 대신 YouTube 자동 자막 사용 · 영상 시각에 맞춰 서버(방 <code>replay</code>)로 전송 · 찬양 구간은 "찬양 중"만 표시
+        <span id="msg" class="warn"></span></div>
+    </div>
+    <div class="panel" id="log"></div>
+  </div>
+  <iframe class="viewer" src="/viewer?room=replay" title="태블릿 수어 Viewer"></iframe>
+</div>
+<script>
+const VIDEO = new URLSearchParams(location.search).get('v') || 'YRq2WCScl_U';
+const KEY = 'syncsl_transcript_' + VIDEO;
+const ROOM = 'replay';
+// 찬양 구간(초). 이 영상은 사람이 확인해 둔 값, 다른 영상은 자막의 [노래] 표시로만 판단
+const SONG = VIDEO === 'YRq2WCScl_U' ? [[39,239],[371,599],[766,858],[893,1145],[1194,1612],[3410,3707]] : [];
+const SECTION = [['여는 말·사도신경',240,365],['기도 인도',600,765],['찬양 사이',859,1193],['기도·대표기도',1613,1920],['성경 봉독·설교',1921,3409],['마침 기도·축도',3708,4160],['광고',4161,9999]];
+const $ = id => document.getElementById(id);
+const post = (p, b) => fetch(p, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(b)}).then(r => r.json());
+let segs = [];
+try { segs = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) {}
+(async () => {
+  if (!segs.length) {           // 다른 브라우저(Chrome·태블릿)에서는 서버에 저장된 자막을 쓴다
+    try { segs = await fetch(`/media/transcripts/${VIDEO}.json`).then(r => r.ok ? r.json() : []); } catch (e) {}
+  } else {
+    try { await post(`/api/transcripts/${VIDEO}`, segs); } catch (e) {}   // 서버에도 저장해 둔다
+  }
+  $('msg').textContent = segs.length ? '' : ' 자막 데이터가 없습니다 (먼저 자막을 불러와야 합니다).';
+})();
+
+let next = 0, buf = '', inSong = false, stats = {n:0, conf:0, low:0};
+// 자동 자막은 '합니다.이 자리에'처럼 마침표 뒤 띄어쓰기가 없는 경우가 많다
+const END = /(?<=[가-힣][.?!])\s*|(?<=니다)\s+|(?<=세요)\s+|(?<=시오)\s+|(?<=소서)\s+|(?<=까요)\s+/;
+const songAt = t => SONG.some(([a, b]) => t >= a && t <= b);
+const fmt = t => { t = Math.floor(t); const h = Math.floor(t/3600), m = Math.floor(t%3600/60), s = t%60; return (h ? h + ':' : '') + String(m).padStart(h?2:1,'0') + ':' + String(s).padStart(2,'0'); };
+
+function log(t, x) {
+  const d = document.createElement('div'); d.className = 'r';
+  d.innerHTML = `<span class="t">${fmt(t)}</span>${x.text}<br><span class="${x.low_confidence ? 'low' : 'g'}">${(x.glosses||[]).join(' ')}</span> <span class="t">${x.mode} ${x.confidence ?? ''}</span>`;
+  $('log').prepend(d);
+}
+async function sendFinal(text, t) {
+  const r = await post(`/api/rooms/${ROOM}/text`, {text, final:true});
+  for (const p of r) {
+    if (p.glosses && !p.glosses.length) continue;        // '네.' '아멘'처럼 뜻 없는 말
+    if (!p.glosses) { log(t, {text:p.text, glosses:['(낭독 중 · 자막만)'], mode:p.mode}); continue; }
+    stats.n++; stats.conf += p.confidence; if (p.low_confidence) stats.low++;
+    log(t, p);
+  }
+  $('sN').textContent = stats.n; $('sC').textContent = (stats.conf / Math.max(1, stats.n)).toFixed(2);
+  $('sL').textContent = Math.round(100 * stats.low / Math.max(1, stats.n)) + '%';
+}
+async function feed(t) {
+  $('sec').textContent = (SECTION.find(([, a, b]) => t >= a && t <= b) || ['–'])[0];
+  const song = songAt(t);
+  if (song && !inSong) { inSong = true; await post(`/api/rooms/${ROOM}/text`, {text:'♪ 찬양 중', final:false}); }
+  if (!song) inSong = false;
+  while (next < segs.length && segs[next].t <= t) {
+    const s = segs[next++];
+    if (songAt(s.t) || /\[노래\]/.test(s.s)) continue;
+    buf = (buf + ' ' + s.s.replace(/\[[^\]]*\]/g, ' ')).replace(/\s+/g, ' ').trim();
+    const parts = buf.split(END);
+    buf = parts.pop() || '';
+    if (parts.length) await sendFinal(parts.join(' '), s.t);
+    if (buf) await post(`/api/rooms/${ROOM}/text`, {text:buf, final:false});
+  }
+}
+function seekTo(t) { next = segs.findIndex(s => s.t >= t); if (next < 0) next = segs.length; buf = ''; }
+
+// YouTube IFrame API
+let player, lastT = 0, busy = false;
+const tag = document.createElement('script'); tag.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(tag);
+window.onYouTubeIframeAPIReady = () => {
+  player = new YT.Player('player', { videoId: VIDEO, playerVars: { rel: 0, cc_load_policy: 0 },
+    events: { onReady: () => post(`/api/rooms/${ROOM}/session`, {domain:'protestant'}) } });
+  setInterval(async () => {
+    if (!player?.getCurrentTime || busy) return;
+    const t = player.getCurrentTime();
+    if (Math.abs(t - lastT) > 5) seekTo(t);           // 사용자가 영상 위치를 옮김
+    lastT = t;
+    if (player.getPlayerState() !== 1) return;          // 재생 중일 때만
+    busy = true; try { await feed(t); } finally { busy = false; }
+  }, 250);
+};
+</script>
+</body>
+</html>

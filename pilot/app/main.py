@@ -48,6 +48,25 @@ def create_app(corpus: Corpus | None = None, agent=None, clock=time.monotonic,
     def console():
         return FileResponse(STATIC / "console.html")
 
+    @app.post("/api/transcripts/{video_id}")
+    async def save_transcript(video_id: str, request: Request):
+        """영상 연동 시험용 자동 자막을 media/transcripts/<id>.json 으로 저장 (현장 PC 안에만 보관)."""
+        import json as _json
+        import re as _re
+        if not _re.fullmatch(r"[A-Za-z0-9_-]{6,20}", video_id):
+            from fastapi import HTTPException
+            raise HTTPException(400, "잘못된 영상 ID")
+        segs = await request.json()
+        d = media_root / "transcripts"
+        d.mkdir(exist_ok=True)
+        (d / f"{video_id}.json").write_text(_json.dumps(segs, ensure_ascii=False), encoding="utf-8")
+        return {"saved": len(segs)}
+
+    @app.get("/replay")
+    def replay():
+        """예배 영상(YouTube)과 자동 자막을 시각에 맞춰 흘려 보는 시험 화면."""
+        return FileResponse(STATIC / "replay.html")
+
     @app.get("/")
     @app.get("/viewer")
     def viewer():

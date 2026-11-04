@@ -107,3 +107,11 @@ def test_creed_recitation_sends_one_fixed_clip_and_holds_lines():
 def test_spacing_merged_after_expression():
     assert tr("다음 주예배는 오전 11시에 시작합니다").glosses[:2] == ["다음주", "예배"]
     assert tr("설교 후함께 기도하겠습니다").glosses == ["설교", "끝", "함께", "기도"]
+
+
+def test_transcript_save_and_replay_page(tmp_path):
+    client = TestClient(create_app(C, media_root=tmp_path))
+    assert client.post("/api/transcripts/YRq2WCScl_U", json=[{"t": 1, "s": "아멘"}]).json() == {"saved": 1}
+    assert client.get("/media/transcripts/YRq2WCScl_U.json").json()[0]["s"] == "아멘"
+    assert client.post("/api/transcripts/../../x", json=[]).status_code in (400, 404)
+    assert "영상 연동" in client.get("/replay").text

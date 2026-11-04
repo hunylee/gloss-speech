@@ -16,7 +16,7 @@ from app.gloss import Session, Translator, GlossResult
 from app.hub import Hub
 from app.planner import RoomClock, plan, total_ms
 
-SENT_SPLIT = re.compile(r"(?<=[.?!])\s+|(?<=니다)\s+|(?<=세요)\s+|(?<=시오)\s+|(?<=소서)\s+")
+SENT_SPLIT = re.compile(r"(?<=[가-힣][.?!])\s*|(?<=[.?!])\s+|(?<=니다)\s+|(?<=세요)\s+|(?<=시오)\s+|(?<=소서)\s+")
 
 
 def split_sentences(text: str) -> list[str]:
