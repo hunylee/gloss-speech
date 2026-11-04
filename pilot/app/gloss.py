@@ -54,6 +54,7 @@ def kiwi():
 SKIP_TAGS = ("J", "E", "S", "XSV", "XSA", "XSN", "XPN", "VCP", "IC")
 SKIP_NNB = {"것", "수", "번", "등", "거", "데", "줄", "뿐", "중", "게", "바", "분"}
 NEG_VX = {"않": ["아니다"], "못하": ["못하다"], "말": ["아니다"]}
+LIGHT_VV = {"하", "되", "드리"}           # 뜻이 앞 명사에 있는 가벼운 동사는 버린다
 
 ENDINGS = re.compile(r"^(습니다|습니까|ㅂ니다|니다|어요|아요|다|요|고|며|면|겠습니다|겠습니까)$")
 
@@ -339,6 +340,10 @@ class Translator:
                 out.append("아니다"); known += 1; continue
             if tag == "SN":
                 out.append(form); known += 1; continue
+            if tag == "VV" and form in LIGHT_VV:
+                continue
+            if tag == "MAG" and form == "못":
+                out.append("못하다"); known += 1; continue
             if tag == "VX":                                           # 보조용언: 부정만 남긴다
                 if form in NEG_VX:
                     out += NEG_VX[form]; known += 1
