@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pytest:*)",
+      "Bash(python3 -m pytest:*)",
+      "Bash(.venv/bin/python -m pytest:*)",
+      "Bash(python -m harness.run_harness:*)",
+      "Bash(.venv/bin/python -m harness.run_harness:*)",
+      "Bash(python tools/make_clip_manifest.py)",
+      "Bash(.venv/bin/python tools/make_clip_manifest.py)",
+      "Bash(python harness/build_scenarios.py)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 # SyncSL 종교시설 시범 서비스 (pilot)
 
 음성 → **한국어 실시간 자막 + gloss 자막 + 수어 클립**을 태블릿에 동시에 띄우는 1-way 시범 서비스입니다.
-대상: 기독교 예배 · 천주교 미사 · 불교 법회. 노트(4/5)의 구조를 그대로 따릅니다.
+대상: 기독교 예배 (천주교·불교는 데이터만 있고 비활성). Claude Code 작업 지침은 `CLAUDE.md`. 노트(4/5)의 구조를 그대로 따릅니다.
 
 ```
 Audio ─▶ 서버(Notebook/Mac mini, 현장 설치) ◀─▶ AI Agent(선택, 로컬 LLM)
@@ -13,8 +13,9 @@ Audio ─▶ 서버(Notebook/Mac mini, 현장 설치) ◀─▶ AI Agent(선택,
 ```bash
 pip install -r requirements.txt
 python tools/make_clip_manifest.py          # data/clips.json (클립 목록) 생성
-uvicorn app.main:app --host 0.0.0.0 --port 8100
+uvicorn app.main:app --host 0.0.0.0 --port 8100   # Mac은 start_pilot.command 더블클릭
 ```
+- 예배 영상 연동 시험: http://localhost:8100/replay?v=<YouTube ID> — 영상 재생 시각에 맞춰 자동 자막을 흘려 자막·gloss·수어 표출 확인
 - 운영 콘솔: http://localhost:8100/console — 상황 선택, 자유 옵션(설교 제목·인명·본문), 🎙 음성 인식, 상위 문장 10개 원탭, QR
 - 태블릿: 콘솔 QR을 찍으면 `http://<서버IP>:8100/viewer?room=main`
 - 실사 수어 클립: `media/clips/<gloss>.mp4` 로 넣으면 바로 재생. 없으면 글자 카드·지문자 카드로 대신 표시
@@ -23,7 +24,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8100
 
 ## 검증 (harness)
 ```bash
-pytest -q                          # 단위·통합 테스트 10개
+pytest -q                          # 단위·통합 테스트 16개
 python -m harness.run_harness      # 시나리오 검증 → harness/out/report.html
 ```
 실제 서버를 띄우고 가상 콘솔(STT 오류·지연 주입) + 가상 태블릿 3~30대로 기독교·천주교·불교 시나리오를 흘려
